@@ -1,0 +1,1 @@
+<img src="{{ asset('assets/images/logo-sm.png') }}" height="50" alt="logo" class="auth-logo">
