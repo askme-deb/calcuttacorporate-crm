@@ -199,6 +199,15 @@
 
                                 {{-- Businesses --}}
                                 <div class="mt-4">
+                                                                                                            <div class="alert alert-warning small mb-2">
+                                                                                                                <strong>Type of businesses:</strong> {{ gettype($client['businesses'] ?? null) }}<br>
+                                                                                                                <strong>Full client:</strong>
+                                                                                                                <pre>{{ json_encode($client, JSON_PRETTY_PRINT) }}</pre>
+                                                                                                            </div>
+                                                                        <div class="alert alert-info small mb-2">
+                                                                            <strong>Debug businesses:</strong>
+                                                                            <pre>{{ json_encode($client['businesses'] ?? null, JSON_PRETTY_PRINT) }}</pre>
+                                                                        </div>
                                     <div class="d-flex justify-content-between align-items-center mb-2">
                                         <div class="fw-bold fs-5">Businesses</div>
                                         <button type="button" wire:click="addBusiness" class="btn btn-success btn-sm">
@@ -206,7 +215,29 @@
                                         </button>
                                     </div>
                                     <div class="row g-3">
-                                        @foreach ($client['businesses'] as $bIndex => $business)
+                                        @php
+                                            $businesses = $client['businesses'] ?? [];
+                                            if (empty($businesses)) {
+                                                $businesses = [[
+                                                    'business_name' => '',
+                                                    'business_entity' => '',
+                                                    'nature_of_business' => '',
+                                                    'business_details' => '',
+                                                    'start_date' => '',
+                                                    'end_date' => '',
+                                                    'gst_number' => '',
+                                                    'pan_number' => '',
+                                                    'state' => '',
+                                                    'partners' => [
+                                                        [
+                                                            'partner_name' => '',
+                                                            'partner_phone' => '',
+                                                        ]
+                                                    ]
+                                                ]];
+                                            }
+                                        @endphp
+                                        @foreach ($businesses as $bIndex => $business)
                                         <div class="col-12"
                                             wire:key="business-{{ $bIndex }}-{{ count($client['businesses']) }}">
                                             <div class="card border-info mb-3">

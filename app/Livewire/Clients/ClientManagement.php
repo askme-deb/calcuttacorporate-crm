@@ -50,7 +50,28 @@ class ClientManagement extends Component
     //  Log::info('ClientManagement component mounted');
     //   Log::info('showCreateForm called');
     public $expandedClients = [];
-
+ public function mount()
+    {
+        if (empty($this->client['businesses']) || !is_array($this->client['businesses'])) {
+            $this->client['businesses'] = [[
+                'business_name' => '',
+                'business_entity' => '',
+                'nature_of_business' => '',
+                'business_details' => '',
+                'start_date' => '',
+                'end_date' => '',
+                'gst_number' => '',
+                'pan_number' => '',
+                'state' => '',
+                'partners' => [
+                    [
+                        'partner_name' => '',
+                        'partner_phone' => '',
+                    ]
+                ]
+            ]];
+        }
+    }
     protected function rules()
                        // Log::info('addBusiness called', ['client' => $this->client]);
     {
@@ -108,7 +129,31 @@ class ClientManagement extends Component
 
     public function showCreateForm()
     {
-        $this->resetForm();
+        $this->reset('client');
+        $this->client = [
+            'client_name' => '',
+            'phone_number' => '',
+            'alternative_number' => '',
+            'email' => '',
+            'state' => '',
+            'businesses' => [[
+                'business_name' => '',
+                'business_entity' => '',
+                'nature_of_business' => '',
+                'business_details' => '',
+                'start_date' => '',
+                'end_date' => '',
+                'gst_number' => '',
+                'pan_number' => '',
+                'state' => '',
+                'partners' => [
+                    [
+                        'partner_name' => '',
+                        'partner_phone' => '',
+                    ]
+                ]
+            ]]
+        ];
         $this->showForm = true;
         $this->editingClientId = null;
     }
@@ -203,31 +248,32 @@ public function removePartner($businessIndex, $partnerIndex)
     {
         $client = Client::with('businesses.partners')->findOrFail($clientId);
         $this->editingClientId = $client->id;
+        $businesses = $client->businesses->map(function ($business) {
+            return [
+                'business_name' => $business->business_name ?? '',
+                'business_entity' => $business->business_entity ?? '',
+                'nature_of_business' => $business->nature_of_business ?? '',
+                'business_details' => $business->business_details ?? '',
+                'start_date' => $business->start_date ?? '',
+                'end_date' => $business->end_date ?? '',
+                'gst_number' => $business->gst_number ?? '',
+                'pan_number' => $business->pan_number ?? '',
+                'state' => $business->state ?? '',
+                'partners' => $business->partners->map(function ($partner) {
+                    return [
+                        'partner_name' => $partner->partner_name ?? '',
+                        'partner_phone' => $partner->partner_phone ?? '',
+                    ];
+                })->toArray(),
+            ];
+        })->toArray();
         $this->client = [
-            'client_name' => $client->client_name,
-            'phone_number' => $client->phone_number,
-            'alternative_number' => $client->alternative_number,
-            'email' => $client->email,
-            'state' => $client->state,
-            'businesses' => $client->businesses->map(function ($business) {
-                return [
-                    'business_name' => $business->business_name,
-                    'business_entity' => $business->business_entity,
-                    'nature_of_business' => $business->nature_of_business,
-                    'business_details' => $business->business_details,
-                    'start_date' => $business->start_date,
-                    'end_date' => $business->end_date,
-                    'gst_number' => $business->gst_number,
-                    'pan_number' => $business->pan_number,
-                    'state' => $business->state,
-                    'partners' => $business->partners->map(function ($partner) {
-                        return [
-                            'partner_name' => $partner->partner_name,
-                            'partner_phone' => $partner->partner_phone,
-                        ];
-                    })->toArray(),
-                ];
-            })->toArray(),
+            'client_name' => $client->client_name ?? '',
+            'phone_number' => $client->phone_number ?? '',
+            'alternative_number' => $client->alternative_number ?? '',
+            'email' => $client->email ?? '',
+            'state' => $client->state ?? '',
+            'businesses' => $businesses,
         ];
         $this->showForm = true;
     }
@@ -269,25 +315,23 @@ public function removePartner($businessIndex, $partnerIndex)
             'alternative_number' => '',
             'email' => '',
             'state' => '',
-            'businesses' => [
-                [
-                    'business_name' => '',
-                    'business_entity' => '',
-                    'nature_of_business' => '',
-                    'business_details' => '',
-                    'start_date' => '',
-                    'end_date' => '',
-                    'gst_number' => '',
-                    'pan_number' => '',
-                    'state' => '',
-                    'partners' => [
-                        [
-                            'partner_name' => '',
-                            'partner_phone' => '',
-                        ]
+            'businesses' => [[
+                'business_name' => '',
+                'business_entity' => '',
+                'nature_of_business' => '',
+                'business_details' => '',
+                'start_date' => '',
+                'end_date' => '',
+                'gst_number' => '',
+                'pan_number' => '',
+                'state' => '',
+                'partners' => [
+                    [
+                        'partner_name' => '',
+                        'partner_phone' => '',
                     ]
                 ]
-            ]
+            ]]
         ];
         $this->editingClientId = null;
     }
