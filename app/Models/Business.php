@@ -19,6 +19,10 @@ class Business extends Model
         'gst_number',
         'pan_number',
         'state',
+        'address',
+        'city',
+        'pincode',
+        'state_code',
     ];
 
     public function client()

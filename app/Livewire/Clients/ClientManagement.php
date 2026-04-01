@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 class ClientManagement extends Component
 {
     use WithPagination;
-     public $formKey = 0;
+    public $formKey = 0;
     public $search = '';
     public $filterState = '';
     public $filterBusiness = '';
@@ -37,6 +37,10 @@ class ClientManagement extends Component
                 'gst_number' => '',
                 'pan_number' => '',
                 'state' => '',
+                'address' => '',
+                'city' => '',
+                'pincode' => '',
+                'state_code' => '',
                 'partners' => [
                     [
                         'partner_name' => '',
@@ -50,30 +54,11 @@ class ClientManagement extends Component
     //  Log::info('ClientManagement component mounted');
     //   Log::info('showCreateForm called');
     public $expandedClients = [];
- public function mount()
+    public function mount()
     {
-        if (empty($this->client['businesses']) || !is_array($this->client['businesses'])) {
-            $this->client['businesses'] = [[
-                'business_name' => '',
-                'business_entity' => '',
-                'nature_of_business' => '',
-                'business_details' => '',
-                'start_date' => '',
-                'end_date' => '',
-                'gst_number' => '',
-                'pan_number' => '',
-                'state' => '',
-                'partners' => [
-                    [
-                        'partner_name' => '',
-                        'partner_phone' => '',
-                    ]
-                ]
-            ]];
-        }
+        $this->ensureClientStructure();
     }
-    protected function rules()
-                       // Log::info('addBusiness called', ['client' => $this->client]);
+    protected function rules()                 // Log::info('addBusiness called', ['client' => $this->client]);
     {
         return [
             'client.client_name' => 'required|string|max:255',
@@ -91,11 +76,15 @@ class ClientManagement extends Component
             'client.businesses.*.gst_number' => ['nullable','regex:/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/'],
             'client.businesses.*.pan_number' => ['nullable','regex:/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/'],
             'client.businesses.*.state' => 'required|string',
+            'client.businesses.*.address' => 'nullable|string',
+            'client.businesses.*.city' => 'nullable|string|max:255',
+            'client.businesses.*.pincode' => 'nullable|string|max:20',
+            'client.businesses.*.state_code' => 'nullable|string|max:20',
             'client.businesses.*.partners' => 'array',
             'client.businesses.*.partners.*.partner_name' => 'nullable|string|max:255',
             'client.businesses.*.partners.*.partner_phone' => 'nullable|string|max:20',
         ];
-                        Log::info('addPartner called', ['businessIndex' => $businessIndex, 'client' => $this->client]);
+                     // Log::info('addPartner called', ['businessIndex' => $businessIndex, 'client' => $this->client]);
     }
 
     public function render()
@@ -109,11 +98,11 @@ class ClientManagement extends Component
             ->when($this->filterBusiness, function ($q) {
                 $q->whereHas('businesses', function ($b) {
                     $b->where('business_name', 'like', "%{$this->filterBusiness}%");
-                        Log::info('saveClient called', ['client' => $this->client, 'editingClientId' => $this->editingClientId]);
+                        // Log::info('saveClient called', ['client' => $this->client, 'editingClientId' => $this->editingClientId]);
                 });
             })
             ->when($this->filterPartner, function ($q) {
-                                Log::info('Updating existing client', ['editingClientId' => $this->editingClientId]);
+                                // Log::info('Updating existing client', ['editingClientId' => $this->editingClientId]);
                 $q->whereHas('businesses.partners', function ($p) {
                     $p->where('partner_name', 'like', "%{$this->filterPartner}%");
                 });
@@ -130,101 +119,81 @@ class ClientManagement extends Component
     public function showCreateForm()
     {
         $this->reset('client');
-        $this->client = [
-            'client_name' => '',
-            'phone_number' => '',
-            'alternative_number' => '',
-            'email' => '',
-            'state' => '',
-            'businesses' => [[
-                'business_name' => '',
-                'business_entity' => '',
-                'nature_of_business' => '',
-                'business_details' => '',
-                'start_date' => '',
-                'end_date' => '',
-                'gst_number' => '',
-                'pan_number' => '',
-                'state' => '',
-                'partners' => [
-                    [
-                        'partner_name' => '',
-                        'partner_phone' => '',
-                    ]
-                ]
-            ]]
-        ];
+        $this->client = $this->emptyClient();
         $this->showForm = true;
         $this->editingClientId = null;
+        $this->formKey++;
     }
 
     public function addBusiness()
     {
-
+        $this->ensureClientStructure();
         $client = $this->client;
-        $client['businesses'][] = [
-            'business_name' => '',
-            'business_entity' => '',
-            'nature_of_business' => '',
-            'business_details' => '',
-            'start_date' => '',
-            'end_date' => '',
-            'gst_number' => '',
-            'pan_number' => '',
-            'state' => '',
-            'partners' => [
-                [
-                    'partner_name' => '',
-                    'partner_phone' => '',
-                ]
-            ]
-        ];
-            // Force deep copy to trigger Livewire reactivity
-            $this->client = unserialize(serialize($client));
+        $client['businesses'][] = $this->emptyBusiness();
+        $this->client = $client;
         $this->formKey++;
-        Log::info('addBusiness called', ['client' => $this->client]);
     }
 
-public function removeBusiness($index)
-{
-    $client = $this->client;
-        \Log::info('removeBusiness called', ['index' => $index, 'client' => $this->client]);
+    public function removeBusiness($index)
+    {
+        $this->ensureClientStructure();
+        $client = $this->client;
         unset($client['businesses'][$index]);
         $client['businesses'] = array_values($client['businesses']);
-    $this->client = $client;
-    $this->formKey++;
-}
+        if (empty($client['businesses'])) {
+            $client['businesses'][] = $this->emptyBusiness();
+        }
+        $this->client = $client;
+        $this->formKey++;
+    }
 
-public function addPartner($businessIndex)
-{
-    $client = $this->client;
-    $client['businesses'][$businessIndex]['partners'][] = [
-        'partner_name' => '', 'partner_phone' => '',
-    ];
-                        Log::info('deleteClient called', ['clientId' => $clientId]);
-    $this->client = $client;
-    $this->formKey++;
-}
+    public function addPartner($businessIndex)
+    {
+        $this->ensureClientStructure();
+        $client = $this->client;
 
-public function removePartner($businessIndex, $partnerIndex)
-{
-    Log::info('toggleExpand called', ['clientId' => $clientId, 'expandedClients' => $this->expandedClients]);
+        if (! isset($client['businesses'][$businessIndex])) {
+            return;
+        }
 
-    $client = $this->client;
-    unset($client['businesses'][$businessIndex]['partners'][$partnerIndex]);
-    $client['businesses'][$businessIndex]['partners'] = array_values(
-        $client['businesses'][$businessIndex]['partners']
-    );
-    $this->client = $client;
-    $this->formKey++;
-}    public function saveClient()
+        if (! isset($client['businesses'][$businessIndex]['partners']) || ! is_array($client['businesses'][$businessIndex]['partners'])) {
+            $client['businesses'][$businessIndex]['partners'] = [];
+        }
+
+        $client['businesses'][$businessIndex]['partners'][] = $this->emptyPartner();
+        $this->client = $client;
+        $this->formKey++;
+    }
+
+    public function removePartner($businessIndex, $partnerIndex)
+    {
+        $this->ensureClientStructure();
+        $client = $this->client;
+
+        if (! isset($client['businesses'][$businessIndex]['partners'][$partnerIndex])) {
+            return;
+        }
+
+        unset($client['businesses'][$businessIndex]['partners'][$partnerIndex]);
+        $client['businesses'][$businessIndex]['partners'] = array_values(
+            $client['businesses'][$businessIndex]['partners']
+        );
+
+        if (empty($client['businesses'][$businessIndex]['partners'])) {
+            $client['businesses'][$businessIndex]['partners'][] = $this->emptyPartner();
+        }
+
+        $this->client = $client;
+        $this->formKey++;
+    }
+
+    public function saveClient()
     {
         $this->validate();
         DB::transaction(function () {
             if ($this->editingClientId) {
                 $client = Client::findOrFail($this->editingClientId);
                 $client->update($this->onlyClientFields());
-                        Log::info('onlyClientFields called', ['client' => $this->client]);
                 $client->businesses()->delete();
             } else {
                 $client = Client::create($this->onlyClientFields());
@@ -236,7 +205,6 @@ public function removePartner($businessIndex, $partnerIndex)
                 foreach ($partners as $partnerData) {
                     $business->partners()->create($partnerData);
                 }
-                        Log::info('resetForm called');
             }
         });
         $this->resetForm();
@@ -259,6 +227,10 @@ public function removePartner($businessIndex, $partnerIndex)
                 'gst_number' => $business->gst_number ?? '',
                 'pan_number' => $business->pan_number ?? '',
                 'state' => $business->state ?? '',
+                'address' => $business->address ?? '',
+                'city' => $business->city ?? '',
+                'pincode' => $business->pincode ?? '',
+                'state_code' => $business->state_code ?? '',
                 'partners' => $business->partners->map(function ($partner) {
                     return [
                         'partner_name' => $partner->partner_name ?? '',
@@ -273,9 +245,10 @@ public function removePartner($businessIndex, $partnerIndex)
             'alternative_number' => $client->alternative_number ?? '',
             'email' => $client->email ?? '',
             'state' => $client->state ?? '',
-            'businesses' => $businesses,
+            'businesses' => ! empty($businesses) ? $businesses : [$this->emptyBusiness()],
         ];
         $this->showForm = true;
+        $this->formKey++;
     }
 
     public function deleteClient($clientId)
@@ -309,30 +282,61 @@ public function removePartner($businessIndex, $partnerIndex)
 
     private function resetForm()
     {
-        $this->client = [
+        $this->client = $this->emptyClient();
+        $this->editingClientId = null;
+        $this->formKey++;
+    }
+
+    private function ensureClientStructure(): void
+    {
+        if (! isset($this->client['businesses']) || ! is_array($this->client['businesses']) || empty($this->client['businesses'])) {
+            $this->client['businesses'] = [$this->emptyBusiness()];
+        }
+
+        foreach ($this->client['businesses'] as $businessIndex => $business) {
+            if (! isset($business['partners']) || ! is_array($business['partners']) || empty($business['partners'])) {
+                $this->client['businesses'][$businessIndex]['partners'] = [$this->emptyPartner()];
+            }
+        }
+    }
+
+    private function emptyClient(): array
+    {
+        return [
             'client_name' => '',
             'phone_number' => '',
             'alternative_number' => '',
             'email' => '',
             'state' => '',
-            'businesses' => [[
-                'business_name' => '',
-                'business_entity' => '',
-                'nature_of_business' => '',
-                'business_details' => '',
-                'start_date' => '',
-                'end_date' => '',
-                'gst_number' => '',
-                'pan_number' => '',
-                'state' => '',
-                'partners' => [
-                    [
-                        'partner_name' => '',
-                        'partner_phone' => '',
-                    ]
-                ]
-            ]]
+            'businesses' => [$this->emptyBusiness()],
         ];
-        $this->editingClientId = null;
+    }
+
+    private function emptyBusiness(): array
+    {
+        return [
+            'business_name' => '',
+            'business_entity' => '',
+            'nature_of_business' => '',
+            'business_details' => '',
+            'start_date' => '',
+            'end_date' => '',
+            'gst_number' => '',
+            'pan_number' => '',
+            'state' => '',
+            'address' => '',
+            'city' => '',
+            'pincode' => '',
+            'state_code' => '',
+            'partners' => [$this->emptyPartner()],
+        ];
+    }
+
+    private function emptyPartner(): array
+    {
+        return [
+            'partner_name' => '',
+            'partner_phone' => '',
+        ];
     }
 }
