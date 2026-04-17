@@ -26,7 +26,8 @@ return new class extends Migration
             $table->date('start_date')->nullable();
             $table->date('deadline')->nullable();
             $table->text('description')->nullable();
-
+            // $table->unsignedBigInteger('asign_to')->nullable();
+            // $table->unsignedBigInteger('asign_by')->nullable();
             $table->date('assigned_on')->nullable();
             $table->unsignedBigInteger('status_id')->nullable();
             $table->text('remarks')->nullable();

@@ -140,7 +140,6 @@
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-lg-12">
-
                                 <div class="mb-3">
                                     <label for="doj" class="mb-2">Sector Name<span style="color: red;">*</span></label>
                                     <input class="form-control" wire:model="name" type="text"

@@ -49,9 +49,9 @@ class AttendanceList extends Component
                 $query->whereIn('name', $excludedRoles);
             })->pluck('id');
 
-            $this->empployee = Employee::whereIn('user_id', $userIds)->get();
+            $this->empployee = Employee::whereIn('user_id', $userIds)->where('status', 'active')->get();
         } else {
-            $this->empployee = Employee::where('user_id', auth()->id())->get();
+            $this->empployee = Employee::where('user_id', auth()->id())->where('status', 'active')->get();
         }
     }
 

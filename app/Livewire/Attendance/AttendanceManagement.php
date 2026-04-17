@@ -5,12 +5,18 @@ namespace App\Livewire\Attendance;
 use Livewire\Component;
 use App\Models\Attendance;
 use App\Models\User;
+use Carbon\Carbon;
 
 class AttendanceManagement extends Component
 {
-    public $attendances, $user_id, $in_time, $out_time, $dated, $status=1, $attendance_id;
+    public $user_id, $in_time, $out_time, $dated, $status=1, $attendance_id;
+    public $filterMonth, $filterUser;
 
     public $isEditing = false, $showModal = false;
+
+    public $attendances = [];
+
+
     protected $listeners = ['deleteItem'];
     // protected $rules = [
     //     'user_id' => 'required|exists:users,id',
@@ -30,22 +36,67 @@ class AttendanceManagement extends Component
             'out_time' => $this->isEditing ? 'required' : 'nullable', // Required only when updating
         ];
     }
+public function mount()
+    {
+        $this->filterMonth = now()->format('Y-m'); // Default to current month
+        $this->filterUser = '';
+        $this->dated = now()->format('Y-m-d');
+        $this->in_time = now()->format('H:i');
+    }
+
+    public function updatedFilterMonth()
+    {
+        $this->loadAttendances();
+    }
+
+    public function updatedFilterUser()
+    {
+       
+        $this->loadAttendances();
+    }
+
+    public function resetFilter()
+    {
+        $this->filterMonth = now()->format('Y-m');
+        $this->filterUser = '';
+        $this->loadAttendances();
+    }
+
+  public function loadAttendances()
+{
+    $query = Attendance::with('user');
+
+    if (!empty($this->filterMonth)) {
+        $year = substr($this->filterMonth, 0, 4);
+        $month = substr($this->filterMonth, 5, 2);
+        $query->whereYear('dated', $year)
+              ->whereMonth('dated', $month);
+    }
+
+    if (!empty($this->filterUser)) {
+        $query->where('user_id', $this->filterUser);
+    }
+
+    // Sort by user_id ASC and dated DESC
+    $this->attendances = $query
+        ->orderBy('dated', 'desc')
+        ->orderBy('user_id', 'asc')
+        ->get();
+}
+
+
 
     public function render()
     {
-        // $excludedRoles = ['Super Admin', 'Director', 'Manager']; // Add multiple roles to exclude
+        $this->loadAttendances(); // always apply filters
 
-        // $users = User::whereDoesntHave('roles', function ($query) use ($excludedRoles) {
-        //     $query->whereIn('name', $excludedRoles);
-        // })->get();
-
-        $this->attendances = Attendance::with('user')->latest()->get();
         return view('livewire.attendance.attendance-management', [
             'users' => User::whereDoesntHave('roles', function ($query) {
                 $query->whereIn('name', ['Super Admin', 'Director', 'Manager']);
             })->get(),
         ]);
     }
+
 
     public function addAttendance()
     {
@@ -87,6 +138,7 @@ class AttendanceManagement extends Component
             'type' => 'success',
             'message' => 'Attendance Added Successfully'
         ]));
+        $this->loadAttendances();
         $this->resetFields();
         $this->closeModal();
     }
@@ -125,6 +177,7 @@ class AttendanceManagement extends Component
                 'type' => 'success',
                 'message' => 'Attendance Updated Successfully'
             ]));
+            $this->loadAttendances();
             $this->resetFields();
             $this->closeModal();
         }
@@ -138,6 +191,7 @@ class AttendanceManagement extends Component
             'text' => 'Attendance Deleted Successfully',
             'icon' => 'success',
         ]));
+        $this->loadAttendances();
     }
 
     private function resetFields()
@@ -152,10 +206,12 @@ class AttendanceManagement extends Component
        // $this->reset('showModal');
     }
 
- public function mount(){
-    $this->dated = now()->format('Y-m-d');
-    $this->in_time = now()->format('H:i');
- }
+    //  public function mount(){
+    //     $this->dated = now()->format('Y-m-d');
+    //     $this->in_time = now()->format('H:i');
+    //  }
+
+
 
     public function closeModal()
     {
@@ -168,4 +224,9 @@ class AttendanceManagement extends Component
         $this->attendance_id = null;
         $this->isEditing = false;
     }
+
+
+
+
+
 }

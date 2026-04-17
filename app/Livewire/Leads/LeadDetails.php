@@ -259,7 +259,6 @@ class LeadDetails extends Component
         }
 
         if(!empty($this->jobtype_id)){
-
             Worksheet::create(
             [
                 'jobtype_id' => $this->pull('jobtype_id'),
@@ -271,10 +270,11 @@ class LeadDetails extends Component
                 'customer_deadline' => $this->customer_deadline,
                 'start_date' => $deal->closing_date,
                 'deadline' => $this->pull('customer_deadline'),
+                'status_id' => 1,
                 'created_by' => Auth::user()->id
             ]);
         }
-
+        
 
 
 
@@ -284,7 +284,6 @@ class LeadDetails extends Component
             'message' => 'Deal Created successfully'
         ]));
         return redirect()->route('leads');
-
     }
 
 

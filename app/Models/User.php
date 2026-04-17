@@ -26,6 +26,8 @@ class User extends Authenticatable implements HasMedia
         'name',
         'email',
         'password',
+        'device_info',
+        'status'
     ];
 
     /**
@@ -51,17 +53,6 @@ class User extends Authenticatable implements HasMedia
         ];
     }
 
-    public function worksheets()
-    {
-        return $this->belongsToMany(
-            Worksheet::class,
-            'project_team_members', // pivot table name
-            'user_id',              // foreign key on pivot table pointing to users
-            'project_id'          // foreign key on pivot table pointing to worksheets
-        );
-    }
-
-
     public function leaveApplications()
     {
         return $this->hasMany(LeaveApplication::class, 'user_id');
@@ -72,20 +63,22 @@ class User extends Authenticatable implements HasMedia
         return $this->hasMany(Lead::class, 'created_by');
     }
 
+    // public function employee()
+    // {
+    //     return $this->hasOne(Employee::class); // Adjust if necessary
+    // }
+    // public function employee()
+    // {
+    //     return $this->hasOne(Employee::class, 'user_id');
+    // }
     public function employee()
     {
         return $this->hasOne(Employee::class); // Adjust if necessary
     }
-
     public function getDescriptionForEvent(string $eventName): string
     {
         return "User has been {$eventName}";
     }
-    public function projectTeamMembers()
-    {
-        return $this->hasMany(ProjectTeamMember::class);
-    }
-
 
      public function getActivitylogOptions(): LogOptions
     {
@@ -95,4 +88,24 @@ class User extends Authenticatable implements HasMedia
             ->useLogName('users')
             ->dontSubmitEmptyLogs(); // Prevents empty logs
     }
+
+
+    public function emailAccounts()
+    {
+        return $this->hasMany(EmailAccount::class);
+    }
+    public function worksheets()
+    {
+        return $this->belongsToMany(
+            Worksheet::class,
+            'project_team_members', // pivot table name
+            'user_id',              // foreign key on pivot table pointing to users
+            'project_id'          // foreign key on pivot table pointing to worksheets
+        );
+    }
+    public function projectTeamMembers()
+    {
+        return $this->hasMany(ProjectTeamMember::class);
+    }
+
 }

@@ -8,8 +8,7 @@
                     <div class="page-title-box">
                         <div class="float-end">
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="#">Metrica</a></li>
-                                <li class="breadcrumb-item"><a href="#">Pages</a></li>
+                                <li class="breadcrumb-item"><a wire:navigate href="{{ route('dashboard')}}">Dashboard</a></li>
                                 <li class="breadcrumb-item active">Profile</li>
                             </ol>
                         </div>
@@ -102,7 +101,7 @@
                                         </ul>
 
                                     </div>
-                                    <div class="col-lg-4 align-self-center">
+                                    <!-- <div class="col-lg-4 align-self-center">
                                         <div class="row">
                                             <div class="col-auto text-end border-end">
                                                 <button type="button"
@@ -123,7 +122,7 @@
                                                         class="text-muted font-12 fw-normal">Followers</span></h4>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div><!--end f_profile-->
                         </div><!--end card-body-->
@@ -170,7 +169,7 @@
                                                                         class="col-xl-3 col-lg-3 text-end mb-lg-0 align-self-center form-label">Employee Code</label>
                                                                     <div class="col-lg-9 col-xl-8">
                                                                         <input class="form-control" wire:model="emp_code"
-                                                                            type="text" value="">
+                                                                            type="text" disabled value="">
                                                                         @error('emp_code')
                                                                         <small class="error">{{ $message }}</small>
                                                                         @enderror

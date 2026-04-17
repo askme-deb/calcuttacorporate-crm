@@ -30,6 +30,7 @@
                         </div>
                         <div class="media-body align-self-center ms-2 text-truncate">
                             <h6 class="my-0 fw-normal text-dark">{{ $notification->data['title'] }}</h6>
+                            <p style="text-wrap:auto; color:#7b8bbe;">{{ $notification->data['message'] }}</p>
                             <small class="text-muted mb-0">{{ $notification->data['name'] }}<b> Created by {{ $notification->data['created_by'] }}</b> </small>
                         </div><!--end media-body-->
                     </div><!--end media-->

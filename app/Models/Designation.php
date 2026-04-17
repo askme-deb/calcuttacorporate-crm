@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
@@ -9,7 +10,7 @@ use Spatie\Activitylog\LogOptions;
 class Designation extends Model
 {
     use LogsActivity;
-
+    use HasFactory;
     protected $fillable = [
         'name',
         'is_visible'
@@ -33,5 +34,15 @@ class Designation extends Model
             ->useLogName('dsignation')
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs();
+    }
+
+    public function previousPromotions()
+    {
+        return $this->hasMany(Promotion::class, 'previous_designation_id');
+    }
+
+    public function newPromotions()
+    {
+        return $this->hasMany(Promotion::class, 'new_designation_id');
     }
 }

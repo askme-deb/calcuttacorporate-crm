@@ -78,7 +78,7 @@
                                     <div class="card deal-card">
                                         <div class="card-body">
                                             <div class="media mb-3">
-                                                <img src="assets/images/users/male.png"
+                                                <img src="{{ asset('assets/images/users/male.png') }}"
                                                     class="me-3 thumb-lg align-self-center rounded-circle"
                                                     alt="...">
                                                 <!-- Action icons container -->

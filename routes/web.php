@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\Api\AuthenticationController;
+use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\PayslipController;
+use App\Livewire\Accounts\Banks\BankAccountManagement;
 use App\Livewire\Actions\LockScreen as ActionsLockScreen;
 use App\Livewire\Attendance\AttendanceList;
 use App\Livewire\Attendance\AttendanceManagement;
@@ -15,16 +18,28 @@ use App\Livewire\Deals\DealsManagement;
 use App\Livewire\Deals\Master\Dealstatus;
 use App\Livewire\Documents\DocumentWorkMapping;
 use App\Livewire\Documents\Listofdocument;
+use App\Livewire\Employees\AwardManager;
 use App\Livewire\Employees\EmployeeCreate;
 use App\Livewire\Employees\EmployeeEdit;
 use App\Livewire\Employees\EmployeeList;
+use App\Livewire\Employees\ExitChecklist;
 use App\Livewire\Employees\Master\Appellations;
 use App\Livewire\Employees\Master\AppointedOrganisation;
 use App\Livewire\Employees\Master\Designations;
 use App\Livewire\Employees\Master\EmployeeType;
 use App\Livewire\Employees\Master\Gender;
 use App\Livewire\Employees\Master\Institute;
+use App\Livewire\Employees\Promotions;
+use App\Livewire\Employees\ResignationManagement;
+use App\Livewire\Employees\ResignationStatus;
+use App\Livewire\Employees\SubmitResignation;
+use App\Livewire\Employees\TerminationModule;
 use App\Livewire\General\Logsheet;
+use App\Livewire\Hr\DeviceInfo;
+use App\Livewire\Hr\SalaryManagement\PayrollManagement;
+use App\Livewire\Hr\SalaryManagement\SalaryDashboard;
+use App\Livewire\Hr\SalaryManagement\SalaryHistory;
+use App\Livewire\Hr\SalaryManagement\SalarySetup;
 use App\Livewire\ImageUploadComponent;
 use App\Livewire\Leads\ConvertedLeads;
 use App\Livewire\Leads\CreateLead;
@@ -61,9 +76,12 @@ use App\Models\User;
 use GuzzleHttp\Promise\Create;
 use Illuminate\Support\Facades\Artisan;
 use Livewire\Volt\Volt;
-
-
-
+use App\Livewire\Hr\Dashboard as HrDashboard;
+use App\Livewire\Sales\Invoice;
+use App\Livewire\Sales\InvoiceEdit;
+use App\Livewire\Sales\InvoiceList;
+use App\Livewire\Sales\InvoiceNonGst;
+use App\Livewire\Sales\InvoiceNonGstEdit;
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', Dashboard::class)->name('dashboard');
@@ -140,6 +158,7 @@ Route::middleware('auth')->group(function () {
      Route::get('/notifications', NotificationList::class)->name('notification');
 });
 
+    Route::get('/bank-accounts', BankAccountManagement::class)->name('bank.index');
 
 // Route::view('profile', 'profile')
 //     ->middleware(['auth'])
@@ -148,6 +167,48 @@ Route::middleware('auth')->group(function () {
 // Route::middleware('api')->group(function () {
 //     Route::apiResource('users', AuthenticationController::class);
 // });
+
+    Route::prefix('employee')->name('employee.')->group(function () {
+        Route::get('/resignation', SubmitResignation::class)->name('resignation.submit');
+        Route::get('/resignation/status', ResignationStatus::class)->name('resignation.status');
+    });
+
+    Route::get('/hr/resignations', ResignationManagement::class)->name('hr.resignations');
+    Route::get('/hr/resignation/{resignation}/exit-checklist', ExitChecklist::class)->name('hr.exit-checklist');
+    Route::get('/hr/termination', TerminationModule::class)->name('hr.termination');
+    Route::get('/hr/awards', AwardManager::class)->name('awards.index');
+    Route::get('/hr/promotions', Promotions::class)->name('promotion');
+    Route::prefix('hr/salary')->group(function () {
+    Route::get('/setup', SalarySetup::class)->name('salary.setup');
+    Route::get('/payroll', PayrollManagement::class)->name('salary.payroll');
+    Route::get('/history', SalaryHistory::class)->name('salary.history');
+    Route::get('/dashboard', SalaryDashboard::class)->name('salary.dashboard');
+
+
+
+
+    // Payslip routes
+    Route::get('/payslip/{id}/download', [PayslipController::class, 'download'])->name('payslip.download');
+    Route::get('/payslip/{id}/preview', [PayslipController::class, 'preview'])->name('payslip.preview');
+    Route::get('/payslip/{id}/email', [PayslipController::class, 'email'])->name('payslip.email');
+    });
+
+
+Route::get('/hr/device-info', DeviceInfo::class)->name('deviceinfo');
+Route::get('/hr/dashboard', HrDashboard::class)->name('hr.dashboard');
+
+
+    //gst
+    Route::get('/gst/invoice/create', Invoice::class)->name('invoice.create');
+    Route::get('/gst/invoice/edit/{id}', InvoiceEdit::class)->name('invoice.edit');
+    Route::get('/invoices', InvoiceList::class)->name('invoices');
+    Route::get('/gst/invoice/print/{id}', [InvoiceController::class, 'gstPrint'])->name('gst-invoice.print');
+
+    //non gst
+    Route::get('/invoice/create', InvoiceNonGst::class)->name('create.invoice');
+    Route::get('/invoice/print/{id}', [InvoiceController::class, 'nonGstprint'])->name('non-gst-invoice.print');
+    Route::get('/invoice/edit/{id}', InvoiceNonGstEdit::class)->name('non-gst-invoice.edit');
+
 
 
 
@@ -159,6 +220,17 @@ Route::get('/clear-all', function () {
 
     return 'All caches cleared!';
 });
+
+
+
+
+
+Route::get('/test-view', function () {
+    return view('invoices.non-gstprint-preview');
+});
+
+
+
 
 Route::get('/create-storage-link', function () {
     Artisan::call('storage:link');

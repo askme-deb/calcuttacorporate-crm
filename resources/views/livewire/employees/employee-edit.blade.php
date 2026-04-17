@@ -36,7 +36,7 @@
                                         <div class="col-sm-6">
                                             <div class="mb-3">
                                                 <label for="employeeCodeInput">Employee Code</label>
-                                                <input type="text" class="form-control" id="employeeCodeInput"  wire:model="emp_code" placeholder="">
+                                                <input type="text" class="form-control" id="employeeCodeInput" readonly wire:model="emp_code" placeholder="">
                                                 @error('emp_code')
                                                 <small class="error">{{ $message }}</small>
                                                 @enderror
@@ -58,21 +58,7 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-sm-3">
-                                            <div class="mb-3">
-                                                <label for="institute">Institute</label>
-                                                <select class="form-select" wire:model="emp_institute" id="inlineFormSelectPref">
-                                                    <option selected>Choose...</option>
-                                                    @foreach ($institute as $instid => $instname)
-                                                        <option value="{{$instid }}">{{$instname }}</option>
-                                                     @endforeach
-                                                </select>
-                                                @error('emp_institute')
-                                                <small class="error">{{ $message }}</small>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-3">
+                                        <div class="col-sm-6">
                                             <div class="mb-3">
                                                 <label for="appellationInput">Appellation</label>
                                                 <select class="form-select" wire:model="emp_appellation">
@@ -113,7 +99,6 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                        
                                         <div class="col-sm-6">
                                             <div class="mb-3">
                                                 <label for="dob">Date of Birth</label>
@@ -232,7 +217,7 @@
                                             <div class="col-sm-6">
                                                 <div class="mb-3">
                                                     <label for="udin">Email</label>
-                                                    <input type="text" class="form-control" wire:model="emp_email"  id="" aria-describedby="udinHelp" placeholder="" >
+                                                    <input type="text" class="form-control" wire:model="emp_email" readonly id="" aria-describedby="udinHelp" placeholder="" >
                                                     @error('emp_email')
                                                     <small class="error">{{ $message }}</small>
                                                     @enderror

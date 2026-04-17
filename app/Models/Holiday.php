@@ -18,6 +18,9 @@ class Holiday extends Model
         'created_by'
     ];
 
+    protected $casts = [
+        'start_date' => 'datetime',
+    ];
 
     public function createdBy()
     {

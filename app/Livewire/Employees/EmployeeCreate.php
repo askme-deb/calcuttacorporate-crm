@@ -58,15 +58,14 @@ class EmployeeCreate extends Component
     public $emp_designation;
     public $firstName;
     public $lastName;
-  
+
   
     protected $rules = [
         'emp_code' => 'required',
         'emp_type' => 'required',
         'emp_appellation' => 'required',
         'emp_first_name' => 'required|string|min:3',
-        //'emp_designation' => 'required',
-        'emp_institute' => 'required',
+        'emp_designation' => 'required',
         'emp_dob' => 'required',
         'emp_sex' => 'required',
         'emp_date_of_joining' => 'required',
@@ -88,7 +87,7 @@ class EmployeeCreate extends Component
         $serialNumber = isset($lastEmployee) ? $lastEmployee->id + 1 : 1; // Auto-increment based on ID
         $serialNumberPadded = str_pad($serialNumber, 3, '0', STR_PAD_LEFT);
         $year = now()->format('Y');
-        $initials = strtoupper(substr('CC', 0, 3)); // Change 'CC' to relevant initials
+        $initials = strtoupper(substr('COD', 0, 3)); // Change 'CC' to relevant initials
         return "{$initials}-{$serialNumberPadded}";
         // $timestamp = now()->format('YmdHis'); // Unique timestamp
         // $randomNumber = str_pad(rand(1, 9), 2, '0', STR_PAD_LEFT); // Random 3-digit number
@@ -140,7 +139,6 @@ class EmployeeCreate extends Component
             'user_id' => $user->id,
             'emp_type' => $this->emp_type,
             'emp_appellation' => $this->emp_appellation,
-            'emp_institute' => $this->emp_institute,
             'emp_designation' => $this->emp_designation,
             'emp_dob' => $this->emp_dob,
             'emp_sex' => $this->emp_sex,
@@ -216,7 +214,6 @@ class EmployeeCreate extends Component
         $this->designations = Designation::pluck('name','id')->all();
         $this->appointedorganization = Appointedorganization::pluck('name','id')->all();
         $this->appellation = Appellation::pluck('name','id')->all();
-        $this->institute = Institute::pluck('name','id')->all();
     }
 
 

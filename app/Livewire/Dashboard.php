@@ -80,12 +80,8 @@ class Dashboard extends Component
 
     public function fetchChartData()
     {
-
         $this->dealsData = Deal::selectRaw(
-            '
-    MONTH(created_at) as month, 
-    COUNT(*) as total_deals'
-        )
+            'MONTH(created_at) as month, COUNT(*) as total_deals')
             ->groupBy('month')
             ->orderBy('month')
             ->get()
@@ -94,10 +90,7 @@ class Dashboard extends Component
 
         // Fetch closed deals separately
         $closedDeals = Deal::selectRaw(
-            '
-    MONTH(closing_date) as month, 
-    SUM(CASE WHEN status_id = 7 THEN 1 ELSE 0 END) as closed_deals'
-        )
+            'MONTH(closing_date) as month, SUM(CASE WHEN status_id = 7 THEN 1 ELSE 0 END) as closed_deals')
             ->whereNotNull('closing_date')
             ->groupBy('month')
             ->orderBy('month')
@@ -134,9 +127,9 @@ class Dashboard extends Component
 
     public function updateChart()
     {
-        $this->dealsData = Deal::selectRaw('MONTH(created_at) as month, 
-                                           COUNT(*) as total_deals, 
-                                           SUM(CASE WHEN status_id = 7 THEN 1 ELSE 0 END) as closed_deals')
+        $this->dealsData = Deal::selectRaw(
+            'MONTH(created_at) as month, COUNT(*) as total_deals, SUM(CASE WHEN status_id = 7 THEN 1 ELSE 0 END) as closed_deals'
+        )
             ->groupBy('month')
             ->orderBy('month')
             ->get()
@@ -147,18 +140,31 @@ class Dashboard extends Component
                 ],
             ])
             ->toArray();
-
         $this->dispatch('dealsUpdated', $this->dealsData);
     }
 
     public function fetchUpcomingFollowups()
     {
+        $user = auth()->user();
 
-        $this->upcomingFollowups = Lead::whereBetween('next_followup_date', [Carbon::today(), Carbon::today()->addDays(7)])
-            ->orderBy('next_followup_date', 'asc')
-            ->get();
+        // Start the query
+        $query = Lead::whereBetween('next_followup_date', [Carbon::today(), Carbon::today()->addDays(7)])
+            ->orderBy('next_followup_date', 'asc');
+        
+        // Apply condition only if the user cannot view all leads
+        if ($user->cannot('View All Leads')) {
+            $query->where(function ($q) use ($user) {
+                $q->where('created_by', $user->id)
+                    ->orWhere('assigned_to', $user->id);
+            });
+        }
+        
+        // Get the results
+        $this->upcomingFollowups = $query->get();
+        // $this->upcomingFollowups = Lead::whereBetween('next_followup_date', [Carbon::today(), Carbon::today()->addDays(7)])
+        //     ->orderBy('next_followup_date', 'asc')
+        //     ->get();
     }
-
     public function render()
     {
         return view('livewire.dashboard');

@@ -63,6 +63,7 @@ class LeaveManagement extends Component
             $this->remainingLeaves = null;
             return;
         }
+
         if (auth()->user()->can('Create Leave for Others')) {
             $userId = $this->employee_id;
         }else{
@@ -75,6 +76,7 @@ class LeaveManagement extends Component
        // dd($leavedEnjoyed);
         $this->remainingLeaves = 12 - $leavedEnjoyed;
         $this->enjoyedLeaves = $leavedEnjoyed;
+    
     }
 
     public function changeLeavetype(){
@@ -116,7 +118,7 @@ class LeaveManagement extends Component
         $this->closeModal();
         $this->dispatch('toastMessage', json_encode([
             'type'=>'success',
-            'message' => 'Permission Created successfully'
+            'message' => 'Leave Applied successfully'
         ]));
 
     }
@@ -218,8 +220,18 @@ class LeaveManagement extends Component
     }
     public function loadLeaveApply()
     {
-        $this->leaveApplications = LeaveApplication::orderBy('id', 'desc')
-        ->get();
+
+   
+        if (auth()->user()->can('View Other Leaves')) {
+            $query = LeaveApplication::with(['leaveType', 'user']);
+        } else {
+            $query = LeaveApplication::with(['leaveType', 'user'])
+                ->where('user_id', auth()->id());
+        }
+        
+        $this->leaveApplications = $query->orderBy('id', 'desc')->get();
+        // $this->leaveApplications = LeaveApplication::orderBy('id', 'desc')
+        // ->get();
     }
 
 

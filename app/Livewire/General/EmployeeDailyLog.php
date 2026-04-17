@@ -28,7 +28,7 @@ class EmployeeDailyLog extends Component
     public function addLog()
     {
         $this->validate([
-            'task_summary' => 'required|string|max:500',
+            'task_summary' => 'required|string|max:2000',
             'hours_worked' => 'required|integer|min:1|max:24',
             'log_date' => 'required|date'
         ]);

@@ -8,6 +8,8 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Employee extends Model implements HasMedia
 {
@@ -33,8 +35,19 @@ class Employee extends Model implements HasMedia
         'emp_udin',
         'emp_address',
         'emp_status',
+        'status',
     ];
 
+
+     // Accessor for full name
+    public function getFullNameAttribute()
+    {
+        return trim(
+            $this->emp_first_name . ' ' .
+            ($this->emp_middle_name ? $this->emp_middle_name . ' ' : '') .
+            $this->emp_last_name
+        );
+    }
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -70,6 +83,46 @@ class Employee extends Model implements HasMedia
     }
 
 
+
+        public function salary()
+        {
+            return $this->hasOne(Salary::class);
+        }
+
+        public function payrolls()
+        {
+            return $this->hasMany(Payroll::class);
+        }
+
+
+
+
+
+    // public function salaryRecords(): HasMany
+    // {
+    //     return $this->hasMany(SalaryRecord::class);
+    // }
+
+    // public function currentSalaryRecord(): HasOne
+    // {
+    //     return $this->hasOne(SalaryRecord::class)->where('status', 'active')->latest();
+    // }
+
+    // public function salaryAdjustments(): HasMany
+    // {
+    //     return $this->hasMany(SalaryAdjustment::class);
+    // }
+
+    // public function payrollHistory(): HasMany
+    // {
+    //     return $this->hasMany(PayrollHistory::class);
+    // }
+
+    //   // Helpers
+    // public function getCurrentSalary(): float
+    // {
+    //     return optional($this->currentSalaryRecord)->net_salary ?? 0;
+    // }
 }
 
 

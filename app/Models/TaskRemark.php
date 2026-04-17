@@ -29,11 +29,6 @@ class TaskRemark extends Model
         return "Task Remark has been {$eventName}";
     }
 
-    public function user() {
-        return $this->belongsTo(User::class, 'user_id');
-    }
-
-
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()

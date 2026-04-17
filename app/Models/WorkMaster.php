@@ -43,9 +43,4 @@ class WorkMaster extends Model
     //         ->dontSubmitEmptyLogs(); // Prevents empty logs
     // }
 
-
-    public function documents()
-    {
-        return $this->belongsToMany(ListOfDocument::class, 'document_work_master', 'work_master_id', 'list_of_document_id')->withTimestamps();
-    }
 }

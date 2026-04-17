@@ -36,24 +36,24 @@ class LeaveApplication extends Model
     }
 
 
-    public function getCreatedAtAttribute($value)
-    {
-        return date('jS M, Y', strtotime($value));
-    }
+    // public function getCreatedAtAttribute($value)
+    // {
+    //     return date('jS M, Y', strtotime($value));
+    // }
 
     // public function getapplyStrtDateAttribute($value)
     // {
     //     return date('jS M, Y', strtotime($value));
     // }
-    public function getapplyEndDateAttribute($value)
-    {
-        return date('jS M, Y', strtotime($value));
-    }
+    // public function getapplyEndDateAttribute($value)
+    // {
+    //     return date('jS M, Y', strtotime($value));
+    // }
 
-    public function getjoinDateAttribute($value)
-    {
-        return date('jS M, Y', strtotime($value));
-    }
+    // public function getjoinDateAttribute($value)
+    // {
+    //     return date('jS M, Y', strtotime($value));
+    // }
 
 
     // public function getstatusAttribute($value)

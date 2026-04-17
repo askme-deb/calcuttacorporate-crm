@@ -48,23 +48,23 @@ new #[Layout('layouts.guest')] class extends Component
         <!-- Email Address -->
         <div class="form-group mb-3">
             <x-input-label for="email" :value="__('Email')" />
-            <x-text-input wire:model="email" id="email" class="" type="email" name="email" required autofocus />  
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />                             
-        </div><!--end form-group--> 
+            <x-text-input wire:model="email" id="email" class="" type="email" name="email" required autofocus />
+            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        </div><!--end form-group-->
 
         <div class="form-group mb-0 row">
             <div class="col-12">
                 <x-primary-button class="w-100">
-                    {{ __('Email Password Reset Link') }} <i class="fas fa-sign-in-alt ms-1"></i>
+                    {{-- {{ __('Email Password Reset Link') }} <i class="fas fa-sign-in-alt ms-1"></i> --}}
                     <span wire:loading wire:target="sendPasswordResetLink">
-                        Email Password Reset Link <i class="fa fa-spinner fa-spin"></i> 
+                        Email Password Reset Link <i class="fa fa-spinner fa-spin"></i>
                      </span>
                      <span wire:loading.remove wire:target="sendPasswordResetLink">
                         Email Password Reset Link <i class="fas fa-sign-in-alt ms-1"></i>
-                     </span>    
+                     </span>
                 </x-primary-button>
-            </div><!--end col--> 
-        </div> <!--end form-group-->                           
+            </div><!--end col-->
+        </div> <!--end form-group-->
     </form>
     <div class="text-center text-muted">
         <p class="mb-1">Remember It ?  <a href="{{ route('login') }}" wire:navigate class="text-primary ms-2">Sign in here</a></p>

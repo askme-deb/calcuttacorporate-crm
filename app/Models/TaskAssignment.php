@@ -21,6 +21,13 @@ class TaskAssignment extends Model
         return "Task has been {$eventName}";
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'assigned_to');
+    }
+
+
+
      public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()

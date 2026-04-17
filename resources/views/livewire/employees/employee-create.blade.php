@@ -36,7 +36,7 @@
                                         <div class="col-sm-6">
                                             <div class="mb-3">
                                                 <label for="employeeCodeInput">Employee Code<span style="color: red;">*</span></label>
-                                                <input type="text" class="form-control" id="employeeCodeInput"  wire:model="emp_code" placeholder="">
+                                                <input type="text" class="form-control" id="employeeCodeInput" readonly wire:model="emp_code" placeholder="">
                                                 @error('emp_code')
                                                 <small class="error">{{ $message }}</small>
                                                 @enderror
@@ -56,24 +56,9 @@
                                                 @enderror
                                             </div>
                                         </div>
-                                        
                                     </div>
                                     <div class="row">
-                                           <div class="col-sm-3">
-                                            <div class="mb-3">
-                                                <label for="institute">Institute<span style="color: red;">*</span></label>
-                                                <select class="form-select" wire:model="emp_institute" id="inlineFormSelectPref">
-                                                    <option selected>Choose...</option>
-                                                    @foreach ($institute as $instid => $instname)
-                                                        <option value="{{$instid }}">{{$instname }}</option>
-                                                     @endforeach
-                                                </select>
-                                                @error('emp_institute')
-                                                <small class="error">{{ $message }}</small>
-                                                @enderror
-                                            </div>
-                                        </div>    
-                                        <div class="col-sm-3">
+                                        <div class="col-sm-6">
                                             <div class="mb-3">
                                                 <label for="appellationInput">Appellation<span style="color: red;">*</span></label>
                                                 <select class="form-select" wire:model="emp_appellation">

@@ -9,7 +9,6 @@ use App\Models\Emptype;
 use App\Models\Gender;
 use App\Models\Designation;
 use App\Models\User;
-use App\Models\Institute;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
@@ -24,7 +23,6 @@ class EmployeeEdit extends Component
     public $aadhar_card;
     public $gender;
     public $emptypes;
-    public $institute;
     public $designation;
     public $appointedorganization;
     public $appellation;
@@ -34,7 +32,6 @@ class EmployeeEdit extends Component
     public $emp_first_name;
     //public $emp_middle_name;
     //public $emp_last_name;
-    public $emp_institute;
     public $emp_designation;
     public $emp_dob;
     public $emp_sex;
@@ -86,7 +83,6 @@ class EmployeeEdit extends Component
     }
     public function updateEmployee()
     {
-
         $this->validate();
         $this->employee = Employee::findOrFail($this->empId);
         $this->splitName($this->emp_first_name);
@@ -95,7 +91,6 @@ class EmployeeEdit extends Component
             'emp_first_name' => $this->firstName,
             'emp_last_name' => $this->lastName,
             'emp_type' => $this->emp_type,
-            'emp_institute' => $this->emp_institute,
             'emp_appellation' => $this->emp_appellation,
             'emp_designation' => $this->emp_designation,
             'emp_dob' => $this->emp_dob,
@@ -114,15 +109,6 @@ class EmployeeEdit extends Component
         $this->user->update([
             'name' => $this->fullName,
         ]);
-        
-         if($this->emp_email){
-              $this->user = User::findOrFail($this->employee->user_id); 
-              $this->user->update([
-                'email' => $this->emp_email
-            ]);
-         }
-        
-        
         if($this->password){
             $this->user = User::findOrFail($this->employee->user_id);
             $this->user->update([
@@ -160,7 +146,7 @@ class EmployeeEdit extends Component
         // Reset form fields
         $this->reset(
             ['emp_code', 'emp_type', 'emp_appellation', 'emp_first_name',
-            'emp_designation','emp_institute','emp_dob','emp_sex','emp_date_of_joining',
+            'emp_designation','emp_dob','emp_sex','emp_date_of_joining',
             'emp_aadhar','emp_pan', 'emp_appointed_organisation','emp_contact_no',
             'emp_emergency_contact_no','emp_email','emp_udin','emp_address','emp_status',
             ]);
@@ -188,7 +174,6 @@ class EmployeeEdit extends Component
             $this->emp_appellation = $this->employee->emp_appellation;
             $this->emp_first_name = $this->fullName;
             $this->emp_designation = $this->employee->emp_designation;
-             $this->emp_institute = $this->employee->emp_institute;
             $this->emp_dob = $this->employee->emp_dob;
             $this->emp_sex = $this->employee->emp_sex;
             $this->emp_date_of_joining = $this->employee->emp_date_of_joining;
@@ -213,7 +198,6 @@ class EmployeeEdit extends Component
         $this->gender = Gender::pluck('name','id')->all();
         $this->emptypes = Emptype::pluck('name','id')->all();
         $this->designations = Designation::pluck('name','id')->all();
-        $this->institute = Institute::pluck('name','id')->all();
         $this->appointedorganization = Appointedorganization::pluck('name','id')->all();
         $this->appellation = Appellation::pluck('name','id')->all();
     }

@@ -128,7 +128,6 @@ class Lead extends Model
         });
     }
 
-
 }
 
 

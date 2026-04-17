@@ -251,46 +251,6 @@
                                     // });
                                 </script>
 
-                                <script>
-                                    document.addEventListener("DOMContentLoaded", function () {
-                                        function initializeCheckboxes() {
-                                            let selectAllCheckbox = document.getElementById("selectAllCheckbox");
-                                            let checkboxes = document.querySelectorAll(".lead-checkbox");
-
-                                            if (!selectAllCheckbox || checkboxes.length === 0) {
-                                                return;
-                                            }
-
-                                            function updateSelectedLeads() {
-                                                let selectedLeads = Array.from(checkboxes)
-                                                    .filter(checkbox => checkbox.checked)
-                                                    .map(checkbox => checkbox.value);
-
-                                                Livewire.dispatch('updateSelectedLeads', { selectedLeads });
-                                            }
-
-                                            selectAllCheckbox.addEventListener("change", function () {
-                                                checkboxes.forEach(checkbox => checkbox.checked = selectAllCheckbox.checked);
-                                                updateSelectedLeads();
-                                            });
-
-                                            checkboxes.forEach(checkbox => {
-                                                checkbox.addEventListener("change", function () {
-                                                    selectAllCheckbox.checked = Array.from(checkboxes).every(checkbox => checkbox.checked);
-                                                    updateSelectedLeads();
-                                                });
-                                            });
-                                        }
-
-                                        // Initialize when page loads
-                                        initializeCheckboxes();
-
-                                        // Reinitialize after Livewire navigates
-                                        document.addEventListener("livewire:navigated", function () {
-                                            initializeCheckboxes();
-                                        });
-                                    });
-                                </script>
 
 
                                 {{ $leads->links(data: ['scrollTo' => false]) }}
@@ -639,4 +599,71 @@
             }
         });
     }
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    // Initialize immediately on DOMContentLoaded
+    initializeCheckboxes();
+
+    function initializeCheckboxes() {
+        let selectAllCheckbox = document.getElementById("selectAllCheckbox");
+        let checkboxes = document.querySelectorAll(".lead-checkbox");
+
+        if (!selectAllCheckbox || checkboxes.length === 0) {
+            // Try again in a short moment if elements aren't found
+            setTimeout(initializeCheckboxes, 100);
+            return;
+        }
+
+        function updateSelectedLeads() {
+            let selectedLeads = Array.from(checkboxes)
+                .filter(checkbox => checkbox.checked)
+                .map(checkbox => checkbox.value);
+            Livewire.dispatch('updateSelectedLeads', { selectedLeads });
+        }
+
+        // Remove previous event listeners if reattaching
+        selectAllCheckbox.removeEventListener("change", handleSelectAllChange);
+
+        function handleSelectAllChange() {
+            checkboxes.forEach(checkbox => checkbox.checked = selectAllCheckbox.checked);
+            updateSelectedLeads();
+        }
+
+        selectAllCheckbox.addEventListener("change", handleSelectAllChange);
+
+        checkboxes.forEach(checkbox => {
+            // Remove previous listener if reattaching
+            checkbox.removeEventListener("change", handleCheckboxChange);
+
+            function handleCheckboxChange() {
+                selectAllCheckbox.checked = Array.from(checkboxes).every(checkbox => checkbox.checked);
+                updateSelectedLeads();
+            }
+
+            checkbox.addEventListener("change", handleCheckboxChange);
+        });
+    }
+
+    // For Livewire 3
+    document.addEventListener("livewire:init", function () {
+        initializeCheckboxes();
+    });
+
+    // For older Livewire versions
+    // document.addEventListener("livewire:load", function () {
+    //     initializeCheckboxes();
+    // });
+
+    // Watch for changes in the document
+    let observer = new MutationObserver(() => {
+        initializeCheckboxes();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    // Reinitialize when Livewire navigates
+    document.addEventListener("livewire:navigated", function () {
+        initializeCheckboxes();
+    });
+});
 </script>
