@@ -16,9 +16,22 @@
                                 </li><!--end nav-item-->
                                 <li class="breadcrumb-item active">Appointments</li>
                             </ol>
+                        <div class="card shadow-sm mb-3">
+                            <div class="card-body d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2">
+                                <div>
+                                    <div class="fw-bold text-dark">{{ $lead->name }}</div>
+                                    <div class="text-secondary small">{{ $lead->company }}</div>
+                                    <div class="text-muted small">Deal: ₹{{ number_format($lead->deal_value) }}</div>
+                                </div>
+                                <div>
+                                    <span class="badge bg-info text-dark">{{ ucfirst($lead->status) }}</span>
+                                </div>
+                                <div class="text-muted small">Last: {{ $lead->updated_at->diffForHumans() }}</div>
+                                <div>
+                                    <a href="{{ route('lead.details', ['id' => Crypt::encryptString($lead->id)]) }}" class="btn btn-outline-primary btn-sm">View</a>
+                                </div>
+                            </div>
                         </div>
-                        <h4 class="page-title">Leads</h4>
-                    </div><!--end page-title-box-->
                 </div><!--end col-->
             </div>
             <!-- end page title end breadcrumb -->

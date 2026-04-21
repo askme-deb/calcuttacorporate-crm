@@ -288,143 +288,117 @@
                                     <div class="row">
                                         <div class="col-lg-6">
                                             <div class="mb-3">
-                                                <label for="doj">Name<span style="color: red;">*</span></label>
-                                                <input class="form-control" wire:model="name" type="text"
-                                                    placeholder="" autocomplete="off">
-                                                @error('name')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
+                                                <label>Name <span style="color: red;">*</span></label>
+                                                <input class="form-control" wire:model="name" type="text" placeholder="Lead Name" autocomplete="off">
+                                                @error('name')<span class="text-danger">{{ $message }}</span>@enderror
                                             </div>
                                             <div class="mb-3">
-                                                <label for="doj">Phone<span style="color: red;">*</span></label>
-                                                <input class="form-control" wire:model="phone" type="text"
-                                                    placeholder="" autocomplete="off">
-                                                @error('phone')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
+                                                <label>Phone <span style="color: red;">*</span></label>
+                                                <input class="form-control" wire:model="phone" type="text" placeholder="Phone Number" autocomplete="off">
+                                                @error('phone')<span class="text-danger">{{ $message }}</span>@enderror
                                             </div>
                                             <div class="mb-3">
-                                                <label for="doj">Status<span style="color: red;">*</span></label>
+                                                <label>Email</label>
+                                                <input class="form-control" wire:model="email" type="email" placeholder="Email Address" autocomplete="off">
+                                                @error('email')<span class="text-danger">{{ $message }}</span>@enderror
+                                            </div>
+                                            <div class="mb-3">
+                                                <label>Company</label>
+                                                <input class="form-control" wire:model="company" type="text" placeholder="Company Name" autocomplete="off">
+                                                @error('company')<span class="text-danger">{{ $message }}</span>@enderror
+                                            </div>
+                                            <div class="mb-3">
+                                                <label>Deal Value <i class="fas fa-info-circle" data-bs-toggle="tooltip" title="Potential value of this lead"></i></label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text">₹</span>
+                                                    <input class="form-control" wire:model="deal_value" type="number" min="0" step="any" placeholder="Deal Value">
+                                                </div>
+                                                @error('deal_value')<span class="text-danger">{{ $message }}</span>@enderror
+                                            </div>
+                                            <div class="mb-3">
+                                                <label>Assigned To</label>
+                                                <select class="form-select" wire:model="assigned_to">
+                                                    <option value="">Select User</option>
+                                                    @foreach ($users as $user)
+                                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @error('assigned_to')<span class="text-danger">{{ $message }}</span>@enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="mb-3">
+                                                <label>Status <span style="color: red;">*</span></label>
                                                 <select class="form-select" wire:model="status_id" id="leadStatus">
                                                     <option value="">Select Status</option>
                                                     @foreach ($leadStatus as $statusid => $statusname)
-                                                        <option value="{{ $statusid }}">{{ $statusname }}
-                                                        </option>
+                                                        <option value="{{ $statusid }}">{{ $statusname }}</option>
                                                     @endforeach
                                                 </select>
-                                                @error('status_id')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
+                                                @error('status_id')<span class="text-danger">{{ $message }}</span>@enderror
                                             </div>
                                             <div class="mb-3">
-                                                <label for="doj">Notes</label>
-                                                <textarea class="form-control" wire:model="notes" type="number" placeholder="" autocomplete="off"></textarea>
-                                                @error('notes')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="doj">Company Name</label>
-                                                <input class="form-control" wire:model="company" type="text"
-                                                    placeholder="" autocomplete="off">
-                                                @error('company')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="doj">Budget</label>
-                                                <input class="form-control" wire:model="budget" type="text"
-                                                    placeholder="" autocomplete="off">
-                                                @error('budget')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-
-                                        </div><!-- end col -->
-                                        <div class="col-lg-6">
-                                            <div class="mb-3">
-                                                <label for="doj">Email</label>
-                                                <input class="form-control" wire:model="email" type="text"
-                                                    placeholder="" autocomplete="off">
-                                                @error('email')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-
-                                            <div class="mb-3">
-                                                <label for="doj">Source<span style="color: red;">*</span></label>
-                                                <select class="form-select" wire:model="source_id" id="leaveType">
-                                                    <option value="">Select Sources</option>
+                                                <label>Source <span style="color: red;">*</span></label>
+                                                <select class="form-select" wire:model="source_id">
+                                                    <option value="">Select Source</option>
                                                     @foreach ($leadSources as $sourceid => $sourcename)
-                                                        <option value="{{ $sourceid }}">{{ $sourcename }}
-                                                        </option>
+                                                        <option value="{{ $sourceid }}">{{ $sourcename }}</option>
                                                     @endforeach
                                                 </select>
-                                                @error('source_id')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
+                                                @error('source_id')<span class="text-danger">{{ $message }}</span>@enderror
                                             </div>
                                             <div class="mb-3">
-                                                <label for="doj">Priority</label>
-                                                <select class="form-select" wire:model="priority_id" id="leaveType">
+                                                <label>Priority</label>
+                                                <select class="form-select" wire:model="priority_id">
                                                     <option value="">Select Priority</option>
                                                     @foreach ($leadPriorities as $priorityid => $priorityname)
-                                                        <option value="{{ $priorityid }}">{{ $priorityname }}
-                                                        </option>
+                                                        <option value="{{ $priorityid }}">{{ $priorityname }}</option>
                                                     @endforeach
-
                                                 </select>
-
-                                                @error('priority_id')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
+                                                @error('priority_id')<span class="text-danger">{{ $message }}</span>@enderror
                                             </div>
                                             <div class="mb-3">
-                                                <label for="doj">Address</label>
-                                                <textarea class="form-control" wire:model="address" placeholder="" autocomplete="off"></textarea>
-                                                @error('address')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
+                                                <label>Sector</label>
+                                                <select class="form-select" wire:model="sector_id">
+                                                    <option value="">Select Sector</option>
+                                                    @foreach ($sectors as $sectorid => $sectorname)
+                                                        <option value="{{ $sectorid }}">{{ $sectorname }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @error('sector_id')<span class="text-danger">{{ $message }}</span>@enderror
                                             </div>
                                             <div class="mb-3">
-                                                <label for="doj">Position</label>
-                                                <input class="form-control" wire:model="position" type="text"
-                                                    placeholder="" autocomplete="off">
-                                                @error('position')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
+                                                <label>Address</label>
+                                                <textarea class="form-control" wire:model="address" placeholder="Address" autocomplete="off"></textarea>
+                                                @error('address')<span class="text-danger">{{ $message }}</span>@enderror
                                             </div>
-
                                             <div class="mb-3">
-                                                <label for="doj">Follow-Up Date<span
-                                                        style="color: red;">*</span></label>
-                                                <input type="date" class="form-control"
-                                                    wire:model="next_followup_date" id="doj" placeholder="">
-                                                @error('next_followup_date')
-                                                    <small class="text-danger">{{ $message }}</small>
-                                                @enderror
+                                                <label>Position</label>
+                                                <input class="form-control" wire:model="position" type="text" placeholder="Position" autocomplete="off">
+                                                @error('position')<span class="text-danger">{{ $message }}</span>@enderror
                                             </div>
-
-
-                                        </div><!-- end col -->
-
-                                    </div><!-- end row -->
-                                </div><!-- end modal-body -->
-
+                                            <div class="mb-3">
+                                                <label>Follow-Up Date <span style="color: red;">*</span></label>
+                                                <input type="date" class="form-control" wire:model="next_followup_date">
+                                                @error('next_followup_date')<small class="text-danger">{{ $message }}</small>@enderror
+                                            </div>
+                                            <div class="mb-3">
+                                                <label>Notes</label>
+                                                <textarea class="form-control" wire:model="notes" placeholder="Notes" autocomplete="off"></textarea>
+                                                @error('notes')<span class="text-danger">{{ $message }}</span>@enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="modal-footer">
-                                    <button type="button" wire:click="closeModal"
-                                        class="btn btn-outline-secondary btn-sm"
-                                        data-bs-dismiss="modal">Close</button>
+                                    <button type="button" wire:click="closeModal" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Close</button>
                                     <button type="submit" class="btn btn-outline-primary btn-sm">
                                         <span wire:loading wire:target="update">
-                                            <span class="spinner-border spinner-border-sm" role="status"
-                                                aria-hidden="true"></span> Loading...
+                                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...
                                         </span>
-                                        <span wire:loading.remove wire:target="update">
-                                            Save changes
-                                        </span>
+                                        <span wire:loading.remove wire:target="update">Save changes</span>
                                     </button>
-                                </div><!-- end modal-footer -->
+                                </div>
                             </form>
                         @else
                             <form wire:submit.prevent="createLead" class="needs-validation">
@@ -432,143 +406,117 @@
                                     <div class="row">
                                         <div class="col-lg-6">
                                             <div class="mb-3">
-                                                <label for="doj">Name<span style="color: red;">*</span></label>
-                                                <input class="form-control" wire:model="name" type="text"
-                                                    placeholder="" autocomplete="off">
-                                                @error('name')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
+                                                <label>Name <span style="color: red;">*</span></label>
+                                                <input class="form-control" wire:model="name" type="text" placeholder="Lead Name" autocomplete="off">
+                                                @error('name')<span class="text-danger">{{ $message }}</span>@enderror
                                             </div>
                                             <div class="mb-3">
-                                                <label for="doj">Phone<span style="color: red;">*</span></label>
-                                                <input class="form-control" wire:model="phone" type="text"
-                                                    placeholder="" autocomplete="off">
-                                                @error('phone')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
+                                                <label>Phone <span style="color: red;">*</span></label>
+                                                <input class="form-control" wire:model="phone" type="text" placeholder="Phone Number" autocomplete="off">
+                                                @error('phone')<span class="text-danger">{{ $message }}</span>@enderror
                                             </div>
                                             <div class="mb-3">
-                                                <label for="doj">Status<span style="color: red;">*</span></label>
+                                                <label>Email</label>
+                                                <input class="form-control" wire:model="email" type="email" placeholder="Email Address" autocomplete="off">
+                                                @error('email')<span class="text-danger">{{ $message }}</span>@enderror
+                                            </div>
+                                            <div class="mb-3">
+                                                <label>Company</label>
+                                                <input class="form-control" wire:model="company" type="text" placeholder="Company Name" autocomplete="off">
+                                                @error('company')<span class="text-danger">{{ $message }}</span>@enderror
+                                            </div>
+                                            <div class="mb-3">
+                                                <label>Deal Value <i class="fas fa-info-circle" data-bs-toggle="tooltip" title="Potential value of this lead"></i></label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text">₹</span>
+                                                    <input class="form-control" wire:model="deal_value" type="number" min="0" step="any" placeholder="Deal Value">
+                                                </div>
+                                                @error('deal_value')<span class="text-danger">{{ $message }}</span>@enderror
+                                            </div>
+                                            <div class="mb-3">
+                                                <label>Assigned To</label>
+                                                <select class="form-select" wire:model="assigned_to">
+                                                    <option value="">Select User</option>
+                                                    @foreach ($users as $user)
+                                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @error('assigned_to')<span class="text-danger">{{ $message }}</span>@enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="mb-3">
+                                                <label>Status <span style="color: red;">*</span></label>
                                                 <select class="form-select" wire:model="status_id" id="leadStatus">
                                                     <option value="">Select Status</option>
                                                     @foreach ($leadStatus as $statusid => $statusname)
-                                                        <option value="{{ $statusid }}">{{ $statusname }}
-                                                        </option>
+                                                        <option value="{{ $statusid }}">{{ $statusname }}</option>
                                                     @endforeach
                                                 </select>
-                                                @error('status_id')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
+                                                @error('status_id')<span class="text-danger">{{ $message }}</span>@enderror
                                             </div>
                                             <div class="mb-3">
-                                                <label for="doj">Notes</label>
-                                                <textarea class="form-control" wire:model="notes" type="number" placeholder="" autocomplete="off"></textarea>
-                                                @error('notes')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="doj">Company Name</label>
-                                                <input class="form-control" wire:model="company" type="text"
-                                                    placeholder="" autocomplete="off">
-                                                @error('company')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-                                            <div class="mb-3">
-                                                <label for="doj">Budget</label>
-                                                <input class="form-control" wire:model="budget" type="text"
-                                                    placeholder="" autocomplete="off">
-                                                @error('budget')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-
-                                        </div><!-- end col -->
-                                        <div class="col-lg-6">
-                                            <div class="mb-3">
-                                                <label for="doj">Email</label>
-                                                <input class="form-control" wire:model="email" type="text"
-                                                    placeholder="" autocomplete="off">
-                                                @error('email')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
-                                            </div>
-
-                                            <div class="mb-3">
-                                                <label for="doj">Source<span style="color: red;">*</span></label>
-                                                <select class="form-select" wire:model="source_id" id="leaveType">
-                                                    <option value="">Select Sources</option>
+                                                <label>Source <span style="color: red;">*</span></label>
+                                                <select class="form-select" wire:model="source_id">
+                                                    <option value="">Select Source</option>
                                                     @foreach ($leadSources as $sourceid => $sourcename)
-                                                        <option value="{{ $sourceid }}">{{ $sourcename }}
-                                                        </option>
+                                                        <option value="{{ $sourceid }}">{{ $sourcename }}</option>
                                                     @endforeach
                                                 </select>
-                                                @error('source_id')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
+                                                @error('source_id')<span class="text-danger">{{ $message }}</span>@enderror
                                             </div>
                                             <div class="mb-3">
-                                                <label for="doj">Priority</label>
-                                                <select class="form-select" wire:model="priority_id" id="leaveType">
+                                                <label>Priority</label>
+                                                <select class="form-select" wire:model="priority_id">
                                                     <option value="">Select Priority</option>
                                                     @foreach ($leadPriorities as $priorityid => $priorityname)
-                                                        <option value="{{ $priorityid }}">{{ $priorityname }}
-                                                        </option>
+                                                        <option value="{{ $priorityid }}">{{ $priorityname }}</option>
                                                     @endforeach
-
                                                 </select>
-
-                                                @error('priority_id')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
+                                                @error('priority_id')<span class="text-danger">{{ $message }}</span>@enderror
                                             </div>
                                             <div class="mb-3">
-                                                <label for="doj">Address</label>
-                                                <textarea class="form-control" wire:model="address" placeholder="" autocomplete="off"></textarea>
-                                                @error('address')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
+                                                <label>Sector</label>
+                                                <select class="form-select" wire:model="sector_id">
+                                                    <option value="">Select Sector</option>
+                                                    @foreach ($sectors as $sectorid => $sectorname)
+                                                        <option value="{{ $sectorid }}">{{ $sectorname }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @error('sector_id')<span class="text-danger">{{ $message }}</span>@enderror
                                             </div>
                                             <div class="mb-3">
-                                                <label for="doj">Position</label>
-                                                <input class="form-control" wire:model="position" type="text"
-                                                    placeholder="" autocomplete="off">
-                                                @error('position')
-                                                    <span class="text-danger">{{ $message }}</span>
-                                                @enderror
+                                                <label>Address</label>
+                                                <textarea class="form-control" wire:model="address" placeholder="Address" autocomplete="off"></textarea>
+                                                @error('address')<span class="text-danger">{{ $message }}</span>@enderror
                                             </div>
-
                                             <div class="mb-3">
-                                                <label for="doj">Follow-Up Date<span
-                                                        style="color: red;">*</span></label>
-                                                <input type="date" class="form-control"
-                                                    wire:model="next_followup_date" id="doj" placeholder="">
-                                                @error('next_followup_date')
-                                                    <small class="text-danger">{{ $message }}</small>
-                                                @enderror
+                                                <label>Position</label>
+                                                <input class="form-control" wire:model="position" type="text" placeholder="Position" autocomplete="off">
+                                                @error('position')<span class="text-danger">{{ $message }}</span>@enderror
                                             </div>
-
-
-                                        </div><!-- end col -->
-
-                                    </div><!-- end row -->
-                                </div><!-- end modal-body -->
-
+                                            <div class="mb-3">
+                                                <label>Follow-Up Date <span style="color: red;">*</span></label>
+                                                <input type="date" class="form-control" wire:model="next_followup_date">
+                                                @error('next_followup_date')<small class="text-danger">{{ $message }}</small>@enderror
+                                            </div>
+                                            <div class="mb-3">
+                                                <label>Notes</label>
+                                                <textarea class="form-control" wire:model="notes" placeholder="Notes" autocomplete="off"></textarea>
+                                                @error('notes')<span class="text-danger">{{ $message }}</span>@enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="modal-footer">
-                                    <button type="button" wire:click="closeModal"
-                                        class="btn btn-outline-secondary btn-sm"
-                                        data-bs-dismiss="modal">Close</button>
+                                    <button type="button" wire:click="closeModal" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Close</button>
                                     <button type="submit" class="btn btn-outline-primary btn-sm">
                                         <span wire:loading wire:target="createLead">
-                                            <span class="spinner-border spinner-border-sm" role="status"
-                                                aria-hidden="true"></span> Loading...
+                                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...
                                         </span>
-                                        <span wire:loading.remove wire:target="createLead">
-                                            Save changes
-                                        </span>
+                                        <span wire:loading.remove wire:target="createLead">Save changes</span>
                                     </button>
-                                </div><!-- end modal-footer -->
+                                </div>
                             </form>
                         @endif
                     </div><!--end modal-content-->

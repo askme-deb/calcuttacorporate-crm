@@ -19,7 +19,8 @@ class RoleSeeder extends Seeder
             'Super Admin',
             'Admin',
             'Employee',
-            'HR Manager'
+            'HR Manager',
+            'Sales'
         ];
         // Create the roles
         foreach ($roles as $roleName) {

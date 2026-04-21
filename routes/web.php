@@ -82,6 +82,7 @@ use App\Livewire\Sales\InvoiceEdit;
 use App\Livewire\Sales\InvoiceList;
 use App\Livewire\Sales\InvoiceNonGst;
 use App\Livewire\Sales\InvoiceNonGstEdit;
+use App\Http\Controllers\ProposalController;
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', Dashboard::class)->name('dashboard');
@@ -209,7 +210,9 @@ Route::get('/hr/dashboard', HrDashboard::class)->name('hr.dashboard');
     Route::get('/invoice/print/{id}', [InvoiceController::class, 'nonGstprint'])->name('non-gst-invoice.print');
     Route::get('/invoice/edit/{id}', InvoiceNonGstEdit::class)->name('non-gst-invoice.edit');
 
-
+    Route::get('proposals/{proposal}/preview', [ProposalController::class, 'preview'])->name('proposals.preview');
+    Route::get('proposals/{proposal}/download', [ProposalController::class, 'download'])->name('proposals.download');
+    Route::get('proposals/{proposal}/email', [ProposalController::class, 'email'])->name('proposals.email');
 
 
 Route::get('/clear-all', function () {

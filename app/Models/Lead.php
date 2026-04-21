@@ -15,11 +15,16 @@ class Lead extends Model
         'name',
         'email',
         'phone',
+        'company',
+        'deal_value',
+        'status',
+        'source',
+        'assigned_to',
+        'notes',
+        // legacy fields for compatibility
         'source_id',
         'status_id',
-        'notes',
         'address',
-        'company',
         'position',
         'budget',
         'priority_id',
@@ -72,9 +77,26 @@ class Lead extends Model
     {
         return $this->belongsTo(User::class, 'assigned_to');
     }
-    
-
-
+    public function proposals()
+    {
+        return $this->hasMany(Proposal::class);
+    }
+    public function activities()
+    {
+        return $this->hasMany(LeadActivity::class);
+    }
+    public function reminders()
+    {
+        return $this->hasMany(LeadReminder::class);
+    }
+    public function tags()
+    {
+        return $this->hasMany(LeadTag::class);
+    }
+    public function attachments()
+    {
+        return $this->hasMany(LeadAttachment::class);
+    }
 
     public function getDescriptionForEvent(string $eventName): string
     {
@@ -95,32 +117,32 @@ class Lead extends Model
     public static function boot()
     {
         parent::boot();
-    
+
         // Log lead creation
         static::created(function ($lead) {
             LeadLog::create([
                 'lead_id' => $lead->id,
-                'user_id' => auth()->id(),
+                'user_id' => auth()->user()?->id,
                 'action' => 'created',
-                'notes' => 'Lead created by ' . auth()->user()->name,
+                'notes' => 'Lead created by ' . (auth()->user()?->name ?? 'System'),
             ]);
         });
-    
+
         // Log lead updates
         static::updating(function ($lead) {
             if ($lead->isDirty('assigned_to')) {
                 LeadLog::create([
                     'lead_id' => $lead->id,
-                    'user_id' => auth()->id(),
+                    'user_id' => auth()->user()?->id,
                     'action' => 'assigned',
                     'notes' => 'Assigned to ' . optional(User::find($lead->assigned_to))->name,
                 ]);
             }
-    
+
             if ($lead->isDirty('status_id') && $lead->status_id == 9) { // Example: Status 9 = Converted
                 LeadLog::create([
                     'lead_id' => $lead->id,
-                    'user_id' => auth()->id(),
+                    'user_id' => auth()->user()?->id,
                     'action' => 'converted',
                     'notes' => 'Lead converted into a deal',
                 ]);

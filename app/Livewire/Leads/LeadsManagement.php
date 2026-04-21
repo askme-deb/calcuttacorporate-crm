@@ -28,16 +28,14 @@ class LeadsManagement extends Component
     public $leadData;
     public $search = '';
 
-
     public $selectedLeads = [];
     public $selectedUser;
     public $selectAll = false;
     public $users;
+    public $sectors;
     use WithFileUploads;
 
     public $file;
-
-    // public $selectedLeads = [];
 
     protected $listeners = [
         'updateSelectedLeads' => 'updateSelectedLeads',
@@ -258,6 +256,7 @@ class LeadsManagement extends Component
         $this->leadStatus = LeadStatus::pluck('name', 'id')->all();
         $this->leadSources = LeadSource::pluck('name', 'id')->all();
         $this->leadPriorities = LeadPriority::pluck('name', 'id')->all();
+        $this->sectors = \App\Models\LeadSector::pluck('name', 'id')->all();
         // $this->loadLeads();
     }
 

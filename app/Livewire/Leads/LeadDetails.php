@@ -25,8 +25,15 @@ class LeadDetails extends Component
     public $showModal = false;
     public $modalMode = '';
     public $leadStatus, $notes, $next_followup_date, $status_id, $followups, $dealstatus, $worklists,$work_id, $jobtype_id, $customer_deadline;
+    public $showProposalPreview = false;
+    public $proposal;
 
-    protected $listeners = ['deleteItem', 'refreshFollowups' => 'loadFollowups', 'refreshComponent' => '$refresh'];
+    protected $listeners = [
+        'deleteItem',
+        'refreshFollowups' => 'loadFollowups',
+        'refreshComponent' => '$refresh',
+        'showProposalPreview',
+    ];
 
 
     public function rules()
@@ -80,16 +87,17 @@ class LeadDetails extends Component
             $this->dealForm = false;
         }
     }
-    
+
     public function mount($id)
     {
         try {
-            $decryptedId = Crypt::decryptString($id); // Decrypt the ID
-            $this->lead = Lead::findOrFail($decryptedId);   // Fetch the item
-            // $this->data = [
-            //     'name' => $this->user->name,
-            //     'email' => $this->user->email,
-            // ];
+            // Try to decrypt, fallback to plain if fails
+            try {
+                $decryptedId = \Illuminate\Support\Facades\Crypt::decryptString($id);
+            } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+                $decryptedId = $id;
+            }
+            $this->lead = Lead::findOrFail($decryptedId);
             $this->leadId = $decryptedId;
             $this->leadStatus = LeadStatus::pluck('name', 'id')->all();
             $this->dealstatus = DealStatus::pluck('name', 'id')->all();
@@ -106,7 +114,7 @@ class LeadDetails extends Component
                 ->where('lead_id', $this->leadId) // Filter by lead_id
                 ->latest()
                 ->get();
-        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+        } catch (\Exception $e) {
             $this->dispatch('toastMessage', json_encode([
                 'type' => 'error',
                 'message' => 'Invalid ID'
@@ -224,7 +232,7 @@ class LeadDetails extends Component
        $this->validate();
 
        $deal_statusData = DealStatus::where('id', $this->status_id)->first();
-     
+
          $deal = Deal::create(
             [
                 'status_id' => $this->pull('status_id'),
@@ -274,7 +282,7 @@ class LeadDetails extends Component
                 'created_by' => Auth::user()->id
             ]);
         }
-        
+
 
 
 
@@ -298,5 +306,21 @@ class LeadDetails extends Component
             $this->dealForm = false; // Hide the form
             $this->workForm = false; // Hide the form
         }
+    }
+
+    public function sendProposal()
+    {
+        // Open the ProposalEditor modal/component for this lead
+        $this->dispatch('openProposalEditor', $this->leadId);
+        $this->dispatch('toastMessage', json_encode([
+            'type' => 'info',
+            'message' => 'Proposal editor opened.'
+        ]));
+    }
+
+    public function showProposalPreview($proposalId)
+    {
+        $this->proposal = \App\Models\Proposal::with('items', 'lead')->find($proposalId);
+        $this->showProposalPreview = true;
     }
 }
