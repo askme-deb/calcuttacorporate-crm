@@ -150,65 +150,66 @@ class LeadDetails extends Component
     public function createFollowup()
     {
         $this->validate();
-        $leadFollowup = LeadsFollowup::create(
-            [
-                'status_id' => $this->pull('status_id'),
+        $leadFollowup = LeadsFollowup::create([
+            'status_id' => $this->pull('status_id'),
+            'lead_id' => $this->leadId,
+            'notes' => $this->notes,
+            'next_followup_date' => $this->pull('next_followup_date'),
+            'followup_by' => Auth::user()->id,
+            'created_at' => now()
+        ]);
+
+        // Find the specific Lead record and update it
+        $lead = Lead::find($this->leadId);
+
+        LeadLog::create([
+            'lead_id' => $this->leadId,
+            'user_id' => auth()->id(),
+            'action' => 'followed_up',
+            'notes' => $this->notes,
+        ]);
+
+        // Log activity for timeline
+        \App\Models\LeadActivity::create([
+            'lead_id' => $this->leadId,
+            'type' => 'followup',
+            'description' => $this->notes,
+            'activity_at' => now(),
+            'user_id' => auth()->id(),
+        ]);
+        // Emit event to refresh activity timeline
+        $this->dispatch('refreshActivityTimeline')->to('leads.lead-activity-timeline');
+
+        $this->notes = '';
+
+        if ($lead) {
+            $lead->update([
+                'status_id' => $leadFollowup->status_id,
+                'notes' => $leadFollowup->notes,
+                'next_followup_date' => $leadFollowup->next_followup_date,
+                'updated_at' => now(),
+            ]);
+        }
+
+        if ($lead && $lead->status_id === 9) {
+            $deal = Deal::create([
+                'status_id' => 7,
                 'lead_id' => $this->leadId,
-                'notes' => $this->notes,
-                'next_followup_date' => $this->pull('next_followup_date'),
-                'followup_by' => Auth::user()->id,
-                'created_at' => now()
-            ]
-        );
-
-            // Find the specific Lead record and update it
-            $lead = Lead::find($this->leadId);
-
-
-            LeadLog::create([
-                'lead_id' => $this->leadId,
-                'user_id' => auth()->id(),
-                'action' => 'followed_up',
-                'notes' => $this->notes,
+                'amount' => $lead->budget,
+                'deal_name' => $lead->name,
+                'closing_date' => now(),
+                'closed_by' => Auth::user()->id,
             ]);
 
-            $this->notes = '';
-
-            if ($lead) {
-                $lead->update([
-                    'status_id' => $leadFollowup->status_id,
-                    'notes' => $leadFollowup->notes,
-                    'next_followup_date' => $leadFollowup->next_followup_date,
-                    'updated_at' => now(),
-                ]);
-            }
-
-            if($lead->status_id===9){
-                $deal = Deal::create(
-                    [
-                        'status_id' => 7,
-                        'lead_id' => $this->leadId,
-                        'amount' => $lead->budget,
-                        'deal_name' => $lead->name,
-                        'closing_date' => now(),
-                        'closed_by' => Auth::user()->id,
-                    ]
-                );
-
-                $client = Client::create(
-                    [
-                        'name' => $lead->name,
-                        'address' => $lead->address,
-                        'phone' => $lead->phone,
-                        'email' => $lead->email,
-                        'company_name' => $lead->company_name,
-                        'created_by' => Auth::user()->id,
-                    ]
-                );
-
-
-            }
-
+            $client = Client::create([
+                'name' => $lead->name,
+                'address' => $lead->address,
+                'phone' => $lead->phone,
+                'email' => $lead->email,
+                'company_name' => $lead->company_name,
+                'created_by' => Auth::user()->id,
+            ]);
+        }
 
         $this->dispatch('refreshFollowups');
         $this->closeModal();

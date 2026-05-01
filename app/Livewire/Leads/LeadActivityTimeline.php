@@ -9,10 +9,17 @@ class LeadActivityTimeline extends Component
     public $leadId;
     public $activities = [];
 
+    protected $listeners = ['refreshActivityTimeline' => 'loadActivities'];
+
     public function mount($leadId)
     {
         $this->leadId = $leadId;
-        $this->activities = Lead::findOrFail($leadId)->activities()->latest('activity_at')->get();
+        $this->loadActivities();
+    }
+
+    public function loadActivities()
+    {
+        $this->activities = Lead::findOrFail($this->leadId)->activities()->latest('activity_at')->get();
     }
 
     public function render()
