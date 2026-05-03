@@ -19,7 +19,7 @@ class LeadActivityTimeline extends Component
 
     public function loadActivities()
     {
-        $this->activities = Lead::findOrFail($this->leadId)->activities()->latest('activity_at')->get();
+        $this->activities = Lead::findOrFail($this->leadId)->activities()->with('user')->latest('activity_at')->get();
     }
 
     public function render()

@@ -7,6 +7,7 @@ use App\Models\Deal;
 use App\Models\DealStatus;
 use App\Models\JobType;
 use App\Models\Lead;
+use App\Models\LeadActivity;
 use App\Models\LeadLog;
 use App\Models\LeadsFollowup;
 use App\Models\LeadStatus;
@@ -26,6 +27,7 @@ class LeadDetails extends Component
     public $modalMode = '';
     public $leadStatus, $notes, $next_followup_date, $status_id, $followups, $dealstatus, $worklists,$work_id, $jobtype_id, $customer_deadline;
     public $showProposalPreview = false;
+    public $showProposalEditor = false;
     public $proposal;
 
     protected $listeners = [
@@ -170,13 +172,7 @@ class LeadDetails extends Component
         ]);
 
         // Log activity for timeline
-        \App\Models\LeadActivity::create([
-            'lead_id' => $this->leadId,
-            'type' => 'followup',
-            'description' => $this->notes,
-            'activity_at' => now(),
-            'user_id' => auth()->id(),
-        ]);
+        $this->logLeadActivity('followup', $this->notes);
         // Emit event to refresh activity timeline
         $this->dispatch('refreshActivityTimeline')->to('leads.lead-activity-timeline');
 
@@ -200,6 +196,8 @@ class LeadDetails extends Component
                 'closing_date' => now(),
                 'closed_by' => Auth::user()->id,
             ]);
+
+            $this->logLeadActivity('deal', 'Deal auto-created from follow-up status update.');
 
             $client = Client::create([
                 'name' => $lead->name,
@@ -244,6 +242,9 @@ class LeadDetails extends Component
                 'closed_by' => Auth::user()->id,
             ]
         );
+
+        $this->logLeadActivity('deal', 'Deal created: ' . $deal->deal_name);
+        $this->dispatch('refreshActivityTimeline')->to('leads.lead-activity-timeline');
 
         if($deal){
             $lead = Lead::find($this->leadId);
@@ -311,6 +312,9 @@ class LeadDetails extends Component
 
     public function sendProposal()
     {
+        $this->showProposalEditor = true;
+        $this->logLeadActivity('proposal', 'Proposal editor opened.');
+        $this->dispatch('refreshActivityTimeline')->to('leads.lead-activity-timeline');
         // Open the ProposalEditor modal/component for this lead
         $this->dispatch('openProposalEditor', $this->leadId);
         $this->dispatch('toastMessage', json_encode([
@@ -323,5 +327,18 @@ class LeadDetails extends Component
     {
         $this->proposal = \App\Models\Proposal::with('items', 'lead')->find($proposalId);
         $this->showProposalPreview = true;
+        $this->logLeadActivity('proposal', 'Proposal preview opened.');
+        $this->dispatch('refreshActivityTimeline')->to('leads.lead-activity-timeline');
+    }
+
+    private function logLeadActivity(string $type, string $description): void
+    {
+        LeadActivity::create([
+            'lead_id' => $this->leadId,
+            'type' => $type,
+            'description' => $description,
+            'activity_at' => now(),
+            'user_id' => auth()->id(),
+        ]);
     }
 }

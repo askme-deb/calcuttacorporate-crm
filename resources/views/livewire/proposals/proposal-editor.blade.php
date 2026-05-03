@@ -2,7 +2,7 @@
     <form wire:submit.prevent="saveDraft">
         <div class="card shadow mx-auto" style="max-width: 900px;">
             <div class="card-header d-flex justify-content-between align-items-center bg-primary text-white">
-                <h5 class="mb-0">@if($proposalId) Edit @else New @endif Proposal</h5>
+                <h5 class="mb-0 text-white">@if($proposalId) Edit @else New @endif Proposal</h5>
                 <select wire:model="type" class="form-select w-auto">
                     <option value="quotation">Quotation Proposal</option>
                     <option value="proposal">Business Proposal</option>

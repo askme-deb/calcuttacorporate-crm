@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Activitylog\LogOptions;
 use App\Models\LeadLog;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Lead extends Model
+class Lead extends Model implements HasMedia
 {
-    use LogsActivity;
+    use LogsActivity, InteractsWithMedia;
 
     protected $fillable = [
         'name',

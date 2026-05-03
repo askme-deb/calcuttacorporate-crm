@@ -26,8 +26,8 @@
             <div class="row">
                 <div class="col-lg-8">
                     <div class="card">
-                        <div class="card-header bg-primary text-white d-flex align-items-center justify-content-between">
-                            <span class="h5 mb-0">Lead Information</span>
+                        <div class="card-header bg-primary text-white  align-items-center justify-content-between">
+                            <span class="h5 mb-0 text-white">Lead Information</span>
                         </div>
                         <div class="card-body">
                             <div class="row mb-3">
@@ -62,20 +62,20 @@
                             </div>
                             <div class="mb-3">
                                 <button class="btn btn-warning btn-sm" wire:click="sendProposal" type="button">
-                                    <i class="fas fa-file-signature"></i> Send Proposal
+                                    <i class="fas fa-file-signature"></i> Create Proposal
                                 </button>
                             </div>
                         </div>
                     </div>
                     <!-- Lead History -->
-                    <div class="card mt-4">
-                        <div class="card-header bg-light">
+                    {{-- <div class="card mt-4">
+                        <div class="card-header bg-secondary text-white">
                             <span class="h6 mb-0">Lead History</span>
                         </div>
                         <div class="card-body p-0">
                             <div class="table-responsive">
                                 <table class="table table-sm mb-0">
-                                    <thead class="thead-light">
+                                    <thead class="thead-dark">
                                         <tr>
                                             <th>Lead</th>
                                             <th>Action</th>
@@ -98,44 +98,13 @@
                                 </table>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                     <!-- CRM Widgets -->
-                    <div class="row mt-4">
-                        <div class="col-md-6 mb-3">
-                            <div class="card h-100">
-                                <div class="card-header bg-light">Activity Timeline</div>
-                                <div class="card-body p-2">
-                                    @livewire('leads.lead-activity-timeline', ['leadId' => $lead->id], key('activity-'.$lead->id))
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <div class="card h-100">
-                                <div class="card-header bg-light">Reminders</div>
-                                <div class="card-body p-2">
-                                    @livewire('leads.lead-reminder-manager', ['leadId' => $lead->id], key('reminder-'.$lead->id))
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <div class="card h-100">
-                                <div class="card-header bg-light">Tags</div>
-                                <div class="card-body p-2">
-                                    @livewire('leads.lead-tag-manager', ['leadId' => $lead->id], key('tag-'.$lead->id))
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <div class="card h-100">
-                                <div class="card-header bg-light">Attachments</div>
-                                <div class="card-body p-2">
-                                    @livewire('leads.lead-attachment-manager', ['leadId' => $lead->id], key('attach-'.$lead->id))
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
+
+                    @if($showProposalEditor)
                     @livewire('proposals.proposal-editor', ['leadId' => $lead->id], key('proposal-'.$lead->id))
+                    @endif
 
                     @php
                         $existingProposal = \App\Models\Proposal::where('lead_id', $lead->id)->latest()->first();
@@ -149,7 +118,7 @@
                 <div class="col-lg-4">
                     <div class="card mb-4">
                         <div class="card-header bg-info text-white">
-                            <span class="h6 mb-0">Followup Details</span>
+                            <span class="h6 mb-0 text-white">Followup Details</span>
                         </div>
                         <div class="card-body">
                             <div class="mb-2">
@@ -171,6 +140,31 @@
                             <a href="javascript:;" wire:click="followupDetailsPopup()" class="btn btn-outline-info btn-sm mt-3">Change Followup Status</a>
                         </div>
                     </div>
+                     <div class="col-md-12 mb-3">
+                            <div class="card h-100">
+                                <div class="card-header bg-success text-white">Attachments</div>
+                                <div class="card-body p-2">
+                                    <livewire:leads.lead-attachment-manager :leadId="$lead->id" />
+                                    {{-- @livewire('leads.lead-attachment-manager', ['leadId' => $lead->id], key('attach-'.$lead->id)) --}}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <div class="card h-100">
+                                <div class="card-header bg-warning text-white">Tags</div>
+                                <div class="card-body p-2">
+                                    @livewire('leads.lead-tag-manager', ['leadId' => $lead->id], key('tag-'.$lead->id))
+                                </div>
+                            </div>
+                        </div>
+                             <div class="col-md-12 mb-3">
+                            <div class="card h-100">
+                                <div class="card-header bg-danger text-white">Reminders</div>
+                                <div class="card-body p-2">
+                                    @livewire('leads.lead-reminder-manager', ['leadId' => $lead->id], key('reminder-'.$lead->id))
+                                </div>
+                            </div>
+                        </div>
                     <div class="card">
                         <div class="card-header bg-light">
                             <span class="h6 mb-0">Lead Details Contact</span>
@@ -255,10 +249,162 @@
                             @endif
                         </div>
                     </div>
+
+                      <div class="row mt-4">
+                        <div class="col-md-12 mb-3">
+                            <div class="card h-100">
+                                <div class="card-header bg-info text-white">Activity Timeline</div>
+                                <div class="card-body p-2">
+                                    @livewire('leads.lead-activity-timeline', ['leadId' => $lead->id], key('activity-'.$lead->id))
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+@if ($showModal)
+<div class="modal show d-block" id="exampleModalDefault" data-bs-backdrop="static" role="dialog"
+    data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true"
+    style="background: rgba(0, 0, 0, .6);">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title m-0" id="exampleModalDefaultLabel">
+                    {{ $modalMode === 'edit' ? 'Edit Lead' : 'Follow-up Details' }}
+                </h6>
+                <button type="button" wire:click="closeModal" class="btn-close" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div><!--end modal-header-->
+            @if ($modalMode === 'edit')
+            <form wire:submit.prevent="update" class="needs-validation">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label for="doj">Status<span style="color: red;">*</span></label>
+                                <select class="form-select" wire:model="status_id" id="leadStatus">
+                                    <option value="">Select Status</option>
+                                    @foreach ($leadStatus as $statusid => $statusname)
+                                    <option value="{{ $statusid }}">{{ $statusname }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                                @error('status_id')
+                                <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
 
+                        </div><!-- end col -->
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label for="doj">Follow-Up Date<span
+                                        style="color: red;">*</span></label>
+                                <input type="date" class="form-control"
+                                    wire:model="next_followup_date" id="doj" placeholder="">
+                                @error('next_followup_date')
+                                <small class="text-danger">{{ $message }}</small>
+                                @enderror
+                            </div>
+                        </div><!-- end col -->
+                    </div><!-- end row -->
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="mb-3">
+                                <label for="doj">Notes</label>
+                                <textarea class="form-control" wire:model="notes" type="number" placeholder="" autocomplete="off"></textarea>
+                                @error('notes')
+                                <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- end modal-body -->
+
+                <div class="modal-footer">
+                    <button type="button" wire:click="closeModal"
+                        class="btn btn-outline-secondary btn-sm"
+                        data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-outline-primary btn-sm">
+                        <span wire:loading wire:target="update">
+                            <span class="spinner-border spinner-border-sm" role="status"
+                                aria-hidden="true"></span> Loading...
+                        </span>
+                        <span wire:loading.remove wire:target="update">
+                            Save changes
+                        </span>
+                    </button>
+                </div><!-- end modal-footer -->
+            </form>
+            @else
+            <form wire:submit.prevent="createFollowup" class="needs-validation">
+                <input type="hidden" wire:model="leadId">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label for="doj">Status<span style="color: red;">*</span></label>
+                                <select class="form-select" wire:model="status_id" id="leadStatus">
+                                    <option value="">Select Status</option>
+                                    @foreach ($leadStatus as $statusid => $statusname)
+                                    <option value="{{ $statusid }}">{{ $statusname }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                                @error('status_id')
+                                <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div><!-- end col -->
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label for="doj">Next Follow-Up Date<span
+                                        style="color: red;">*</span></label>
+                                <input type="date" class="form-control"
+                                    wire:model="next_followup_date" id="doj" placeholder="">
+                                @error('next_followup_date')
+                                <small class="text-danger">{{ $message }}</small>
+                                @enderror
+                            </div>
+                        </div><!-- end col -->
+                    </div><!-- end row -->
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="mb-3">
+                                <label for="doj">Notes<span
+                                        style="color: red;">*</span></label></label>
+                                <textarea class="form-control" wire:model="notes" type="number" placeholder="" autocomplete="off" rows="5"></textarea>
+                                @error('notes')
+                                <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- end modal-body -->
+
+                <div class="modal-footer">
+                    <button type="button" wire:click="closeModal"
+                        class="btn btn-outline-secondary btn-sm"
+                        data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-outline-primary btn-sm">
+                        <span wire:loading wire:target="createFollowup">
+                            <span class="spinner-border spinner-border-sm" role="status"
+                                aria-hidden="true"></span> Loading...
+                        </span>
+                        <span wire:loading.remove wire:target="createFollowup">
+                            Save changes
+                        </span>
+                    </button>
+                </div><!-- end modal-footer -->
+            </form>
+            @endif
+        </div><!--end modal-content-->
+    </div><!--end modal-dialog-->
+</div>
+@endif
 </div>
 

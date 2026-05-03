@@ -113,6 +113,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/leads', LeadsManagement::class)->name('leads');
     Route::get('/leads/converted', ConvertedLeads::class)->name('leads.converted');
+    Route::get('/leads/pipeline', \App\Livewire\Leads\LeadPipelineBoard::class)->name('leads.pipeline');
     Route::get('/leads/{id}', LeadDetails::class)->name('lead.details');
     Route::get('/lead-priority', LeadPriority::class)->name('leadPriority');
     Route::get('/lead-sector', LeadSector::class)->name('leadSector');
