@@ -8,6 +8,9 @@ use App\Livewire\Actions\LockScreen as ActionsLockScreen;
 use App\Livewire\Attendance\AttendanceList;
 use App\Livewire\Attendance\AttendanceManagement;
 use App\Livewire\Clients\ClientManagement;
+use App\Livewire\Meetings\MeetingSummaryManagement;
+use App\Livewire\Portals\AdvocatePortal;
+use App\Livewire\Portals\ClientPortal;
 use Illuminate\Support\Facades\Route;
 
 
@@ -112,6 +115,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/users/{id}/edit', EditUser::class)->name('user.edit');
 
     Route::get('/leads', LeadsManagement::class)->name('leads');
+    Route::get('/leads/create', CreateLead::class)->name('createLead');
     Route::get('/leads/converted', ConvertedLeads::class)->name('leads.converted');
     Route::get('/leads/pipeline', \App\Livewire\Leads\LeadPipelineBoard::class)->name('leads.pipeline');
     Route::get('/leads/{id}', LeadDetails::class)->name('lead.details');
@@ -142,6 +146,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/tasks/{id}', TaskManagement::class)->name('tasks');
     Route::get('/project-details/{id}', ProjectDetails::class)->name('project.details');
     Route::get('/clients', ClientManagement::class)->name('client');
+    Route::get('/meeting-summary', MeetingSummaryManagement::class)->name('meetings.summary');
+    Route::get('/meeting-summary/create', MeetingSummaryManagement::class)->name('meetings.summary.create');
+    Route::get('/meeting-summary/{meeting}/edit', MeetingSummaryManagement::class)->name('meetings.summary.edit');
+    Route::get('/advocate-portal', AdvocatePortal::class)->name('advocate.portal');
+    Route::get('/client-portal', ClientPortal::class)->name('client.portal');
     Route::get('/profile', Profile::class)->name('profile');
 
     Route::get('/logsheet', Logsheet::class)->name('logsheet');

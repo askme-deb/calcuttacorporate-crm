@@ -51,22 +51,23 @@
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Status <span class="text-danger">*</span></label>
-                                        <select class="form-select" wire:model.defer="status" required>
+                                        <select class="form-select" wire:model.defer="status_id" required>
                                             <option value="">Select Status</option>
-                                            <option value="new">New Lead</option>
-                                            <option value="contacted">Contacted</option>
-                                            <option value="qualified">Qualified</option>
-                                            <option value="proposal_sent">Proposal/Quotation Sent</option>
-                                            <option value="negotiation">Negotiation</option>
-                                            <option value="won">Won</option>
-                                            <option value="lost">Lost</option>
+                                            @foreach($leadStatus as $statusId => $statusName)
+                                                <option value="{{ $statusId }}">{{ $statusName }}</option>
+                                            @endforeach
                                         </select>
-                                        @error('status') <span class="text-danger small">{{ $message }}</span> @enderror
+                                        @error('status_id') <span class="text-danger small">{{ $message }}</span> @enderror
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label">Source</label>
-                                        <input type="text" class="form-control" wire:model.defer="source">
-                                        @error('source') <span class="text-danger small">{{ $message }}</span> @enderror
+                                        <label class="form-label">Source <span class="text-danger">*</span></label>
+                                        <select class="form-select" wire:model.defer="source_id" required>
+                                            <option value="">Select Source</option>
+                                            @foreach($leadSources as $sourceId => $sourceName)
+                                                <option value="{{ $sourceId }}">{{ $sourceName }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('source_id') <span class="text-danger small">{{ $message }}</span> @enderror
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">Assigned To</label>
@@ -77,6 +78,46 @@
                                             @endforeach
                                         </select>
                                         @error('assigned_to') <span class="text-danger small">{{ $message }}</span> @enderror
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Priority</label>
+                                        <select class="form-select" wire:model.defer="priority_id">
+                                            <option value="">Select Priority</option>
+                                            @foreach($leadPriorities as $priorityId => $priorityName)
+                                                <option value="{{ $priorityId }}">{{ $priorityName }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('priority_id') <span class="text-danger small">{{ $message }}</span> @enderror
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Sector</label>
+                                        <select class="form-select" wire:model.defer="sector_id">
+                                            <option value="">Select Sector</option>
+                                            @foreach($sectors as $sectorId => $sectorName)
+                                                <option value="{{ $sectorId }}">{{ $sectorName }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('sector_id') <span class="text-danger small">{{ $message }}</span> @enderror
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Address</label>
+                                        <textarea class="form-control" wire:model.defer="address" rows="3"></textarea>
+                                        @error('address') <span class="text-danger small">{{ $message }}</span> @enderror
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Position</label>
+                                        <input type="text" class="form-control" wire:model.defer="position">
+                                        @error('position') <span class="text-danger small">{{ $message }}</span> @enderror
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Budget</label>
+                                        <input type="text" class="form-control" wire:model.defer="budget">
+                                        @error('budget') <span class="text-danger small">{{ $message }}</span> @enderror
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Follow-Up Date</label>
+                                        <input type="date" class="form-control" wire:model.defer="next_followup_date">
+                                        @error('next_followup_date') <span class="text-danger small">{{ $message }}</span> @enderror
                                     </div>
                                     <div class="col-12">
                                         <label class="form-label">Notes</label>
@@ -95,130 +136,5 @@
             </div>
         </div>
     </div>
-</div>
-
-                                        <div class="mb-3 row">
-                                            <label for="example-text-input" class="col-sm-2 col-form-label text-end">Address</label>
-                                            <div class="col-sm-10">
-                                                <input class="form-control" wire:model="name" type="text" value="" id="example-text-input">
-                                                @error('name')
-                                                <span class="text-danger">{{ $message }}</span>
-                                               @enderror
-
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 row">
-                                            <label for="example-text-input" class="col-sm-2 col-form-label text-end">Company</label>
-                                            <div class="col-sm-10">
-                                                <input class="form-control" wire:model="name" type="text" value="" id="example-text-input">
-                                                @error('name')
-                                                <span class="text-danger">{{ $message }}</span>
-                                               @enderror
-
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 row">
-                                            <label for="example-text-input" class="col-sm-2 col-form-label text-end">Position</label>
-                                            <div class="col-sm-10">
-                                                <input class="form-control" wire:model="name" type="text" value="" id="example-text-input">
-                                                @error('name')
-                                                <span class="text-danger">{{ $message }}</span>
-                                               @enderror
-
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 row">
-                                            <label for="example-text-input" class="col-sm-2 col-form-label text-end">Budget</label>
-                                            <div class="col-sm-10">
-                                                <input class="form-control" wire:model="name" type="text" value="" id="example-text-input">
-                                                @error('name')
-                                                <span class="text-danger">{{ $message }}</span>
-                                               @enderror
-
-                                            </div>
-                                        </div>
-
-                                        <div class="mb-3 row">
-                                            <label for="example-phone-input" class="col-sm-2 col-form-label text-end">Priority</label>
-                                            <div class="col-sm-10">
-                                                <select id="source" name="source" class="w-full p-2 border border-gray-300 rounded" required="">
-                                                    <option value="low">Low</option>
-                                                    <option value="medium">Medium</option>
-                                                    <option value="high">High</option>
-                                                </select>
-                                                @error('phone')
-                                                <span class="text-danger">{{ $message }}</span>
-                                               @enderror
-
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 row">
-                                            <label for="example-phone-input" class="col-sm-2 col-form-label text-end">Assigned To
-                                            </label>
-                                            <div class="col-sm-10">
-                                                <select id="source" name="source" class="w-full p-2 border border-gray-300 rounded" required="">
-                                                    <option value="low">Low</option>
-                                                    <option value="medium">Medium</option>
-                                                    <option value="high">High</option>
-                                                </select>
-                                                @error('phone')
-                                                <span class="text-danger">{{ $message }}</span>
-                                               @enderror
-
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 row">
-                                            <label for="example-phone-input" class="col-sm-2 col-form-label text-end">Follow-Up Date
-
-                                            </label>
-                                            <div class="col-sm-10">
-                                                <input type="date" name="" class="form-control" id="">
-                                                @error('phone')
-                                                <span class="text-danger">{{ $message }}</span>
-                                               @enderror
-
-                                            </div>
-                                        </div>
-                                </div>
-
-                                <div class="col-lg-3">
-
-                                   <div class="card">
-                                    <div class="card-header  ">
-                                        <h4 class="card-title ">Publish</h4>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="mb-3 float-end">
-
-                                            <button type="button" class="btn btn-de-danger">Cancel</button>
-                                            <button type="submit" class="btn btn-primary btn-sm">
-                                                <span wire:loading wire:target="addUser">
-                                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...
-                                                </span>
-                                                <span wire:loading.remove wire:target="addUser">
-                                                    Save & Publish
-                                                </span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-
-
-                                </div>
-
-                            </div>
-                        </form>
-                        </div>
-                    </div> <!-- end card -->
-                </div> <!-- end col -->
-            </div> <!-- end row -->
-
-        </div>
-        <!-- Footer Start -->
-        <livewire:layout.footer />
-        <!-- end Footer -->
-
-    </div>
-    <!-- end page content -->
 </div>
 

@@ -350,7 +350,7 @@
             @canany(['Create Project', 'View Project', 'Edit Project', 'Delete Project', 'Asign Project', 'Create Lead',
             'Edit Lead', 'View Lead', 'Delete Lead', 'Create Deal', 'View Deal', 'Edit Deal', 'Delete Deal'])
             <div id="codProjects" wire:ignore
-                class="main-icon-menu-pane tab-pane {{ request()->routeIs('leads.*', 'lead.details', 'project.*', 'worksheet', 'project.edit', 'tasks', 'client') ? 'active show' : '' }}"
+                class="main-icon-menu-pane tab-pane {{ request()->routeIs('leads.*', 'lead.details', 'project.*', 'worksheet', 'project.edit', 'tasks', 'client', 'meetings.summary', 'advocate.portal', 'client.portal') ? 'active show' : '' }}"
                 role="tabpanel" aria-labelledby="project-tab">
                 <div class="title-box">
                     <h6 class="menu-title">Projects</h6>
@@ -447,6 +447,29 @@
                             href="{{ route('client') }}">Clients</a>
                     </li>
                     @endcanany
+                    <li class="nav-item">
+                        <a class="nav-link" href="#sidebarMeetings" data-bs-toggle="collapse" role="button"
+                            aria-expanded="false" aria-controls="sidebarMeetings">
+                            Meetings & Portals
+                        </a>
+                        <div class="collapse {{ request()->routeIs('meetings.summary', 'advocate.portal', 'client.portal') ? 'show' : '' }}"
+                            id="sidebarMeetings">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link {{ request()->routeIs('meetings.summary') ? 'active' : '' }}"
+                                        href="{{ route('meetings.summary') }}" wire:navigate>Meeting Summary</a>
+                                </li>
+                                {{-- <li class="nav-item">
+                                    <a class="nav-link {{ request()->routeIs('advocate.portal') ? 'active' : '' }}"
+                                        href="{{ route('advocate.portal') }}" wire:navigate>Advocate Portal</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link {{ request()->routeIs('client.portal') ? 'active' : '' }}"
+                                        href="{{ route('client.portal') }}" wire:navigate>Client Portal</a>
+                                </li> --}}
+                            </ul>
+                        </div>
+                    </li>
                     @canany(['Create Team', 'View Team', 'Edit Team', 'Delete Team'])
                     <li class="nav-item">
                         <a class="nav-link" href="pages-treeview.html">Team</a>

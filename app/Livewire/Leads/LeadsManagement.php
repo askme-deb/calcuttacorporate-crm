@@ -6,11 +6,9 @@ use App\Imports\LeadsImport;
 use App\Models\Lead;
 use App\Models\LeadLog;
 use App\Models\LeadPriority;
-use App\Models\LeadsFollowup;
 use App\Models\LeadSource;
 use App\Models\LeadStatus;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\WithoutUrlPagination;
@@ -22,7 +20,6 @@ class LeadsManagement extends Component
 {
     use WithPagination, WithoutUrlPagination;
     public $showModal = false;
-    public $modalMode = '';
     public  $leadStatus, $leadSources, $leadPriorities, $leadId;
     public $name, $phone, $email, $address, $status_id, $source_id, $priority_id, $notes, $company, $position, $budget, $next_followup_date, $created_by;
     public $leadData;
@@ -129,82 +126,18 @@ class LeadsManagement extends Component
 
     public function rules()
     {
-        $rules = [];
-
-        if ($this->modalMode === 'create') {
-            $rules = [
-                'name' => 'required',
-                'phone' => 'required|numeric',
-                'source_id' => 'required|numeric',
-                'status_id' => 'required|numeric',
-                //'next_followup_date' => 'required',
-            ];
-        } elseif ($this->modalMode === 'edit') {
-            $rules = [
-                'name' => 'required',
-                'phone' => 'required|numeric',
-                'source_id' => 'required|numeric',
-                'status_id' => 'required|numeric',
-                //'next_followup_date' => 'required',
-            ];
-        }
-
-        return $rules;
-    }
-
-
-
-    public function addLead()
-    {
-        $this->showModal = true;
-        $this->modalMode = 'create';
-    }
-
-    public function createLead()
-    {
-        $this->validate();
-        $lead_Id = Lead::create(
-            [
-                'name' => $this->pull('name'),
-                'email' => $this->pull('email'),
-                'phone' => $this->pull('phone'),
-                'source_id' => $this->pull('source_id'),
-                'status_id' => $this->pull('status_id'),
-                'notes' => $this->pull('notes'),
-                'address' => $this->pull('address'),
-                'company' => $this->pull('company'),
-                'position' => $this->pull('position'),
-                'budget' => $this->pull('budget'),
-                'priority_id' => $this->pull('priority_id'),
-                'next_followup_date' => $this->pull('next_followup_date'),
-                'created_by' => Auth::user()->id
-            ]
-        );
-
-        LeadsFollowup::create(
-            [
-                'status_id' => $lead_Id->status_id,
-                'lead_id' => $lead_Id->id,
-                'notes' => $lead_Id->notes,
-                'next_followup_date' => $lead_Id->next_followup_date,
-                'followup_by' => Auth::user()->id,
-                'created_at' => now()
-            ]
-        );
-
-        $this->dispatch('refreshComponent');
-        $this->closeModal();
-        $this->dispatch('toastMessage', json_encode([
-            'type' => 'success',
-            'message' => 'Lead Created successfully'
-        ]));
+        return [
+            'name' => 'required',
+            'phone' => 'required|numeric',
+            'source_id' => 'required|numeric',
+            'status_id' => 'required|numeric',
+        ];
     }
 
 
     public function edit($id)
     {
         $this->showModal = true;
-        $this->modalMode = 'edit';
         $this->leadId = $id;
         $this->leadData = Lead::findOrFail($id);
 
