@@ -54,6 +54,14 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    'company_address_line_1' => env('COMPANY_ADDRESS_LINE_1'),
+
+    'company_address_line_2' => env('COMPANY_ADDRESS_LINE_2'),
+
+    'company_phone' => env('COMPANY_PHONE'),
+
+    'company_gstin' => env('COMPANY_GSTIN'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

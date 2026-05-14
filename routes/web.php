@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthenticationController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\MeetingSummaryPdfController;
 use App\Http\Controllers\PayslipController;
 use App\Livewire\Accounts\Banks\BankAccountManagement;
 use App\Livewire\Actions\LockScreen as ActionsLockScreen;
@@ -149,6 +150,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/meeting-summary', MeetingSummaryManagement::class)->name('meetings.summary');
     Route::get('/meeting-summary/create', MeetingSummaryManagement::class)->name('meetings.summary.create');
     Route::get('/meeting-summary/{meeting}/edit', MeetingSummaryManagement::class)->name('meetings.summary.edit');
+    Route::get('/meeting-summary/{meeting}/print', MeetingSummaryManagement::class)->name('meetings.summary.print');
+    Route::get('/meeting-summary/{meeting}/pdf', MeetingSummaryPdfController::class)->name('meetings.summary.pdf');
+    Route::get('/meeting-summary/{meeting}', MeetingSummaryManagement::class)->name('meetings.summary.preview');
     Route::get('/advocate-portal', AdvocatePortal::class)->name('advocate.portal');
     Route::get('/client-portal', ClientPortal::class)->name('client.portal');
     Route::get('/profile', Profile::class)->name('profile');

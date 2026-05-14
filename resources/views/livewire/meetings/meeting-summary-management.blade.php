@@ -72,6 +72,12 @@
                                             @endif
                                         </td>
                                         <td>
+                                            <a href="{{ route('meetings.summary.preview', $meetingRow->id) }}" class="btn btn-sm btn-info text-white">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ route('meetings.summary.print', $meetingRow->id) }}" target="_blank" class="btn btn-sm btn-secondary">
+                                                <i class="fas fa-print"></i>
+                                            </a>
                                             <a href="{{ route('meetings.summary.edit', $meetingRow->id) }}" class="btn btn-sm btn-warning">
                                                 <i class="fas fa-edit"></i>
                                             </a>
@@ -82,7 +88,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="7" class="text-center">No meeting summaries found.</td>
+                                        <td colspan="8" class="text-center">No meeting summaries found.</td>
                                     </tr>
                                 @endforelse
                             </tbody>

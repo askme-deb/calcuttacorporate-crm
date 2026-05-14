@@ -2,11 +2,13 @@
 
 use App\Livewire\Meetings\MeetingSummaryManagement;
 use App\Models\Client;
+use App\Models\Lead;
 use App\Models\MeetingSummary;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
+use Spatie\Permission\Models\Role;
 
 it('allows an authenticated user to open the meeting summary page', function () {
     $user = User::factory()->create();
@@ -64,6 +66,102 @@ it('creates a meeting summary with uploaded attachments', function () {
     expect($meeting->attachments[0]['file_path'])->not->toBeNull();
     expect($meeting->attachments[0]['uploaded'])->toBeTrue();
     Storage::disk('public')->assertExists($meeting->attachments[0]['file_path']);
+});
+
+it('shows leads and clients for sales employees and autofills meeting contact fields', function () {
+    Role::findOrCreate('Sales');
+
+    $salesUser = User::factory()->create();
+    $salesUser->assignRole('Sales');
+
+    $client = Client::create([
+        'client_name' => 'Acme Client',
+        'phone_number' => '9876543210',
+        'alternative_number' => null,
+        'email' => 'client@example.com',
+        'state' => 'West Bengal',
+    ]);
+
+    $lead = Lead::create([
+        'name' => 'Prospect One',
+        'phone' => '9988776655',
+        'company' => 'Prospect Labs',
+        'status' => 'Open',
+        'created_by' => $salesUser->id,
+    ]);
+
+    $component = Livewire::actingAs($salesUser)
+        ->test(MeetingSummaryManagement::class)
+        ->set('meeting.meeting_created_by', $salesUser->id);
+
+    expect(collect($component->get('partyOptions'))->pluck('value'))->toContain('client:' . $client->id);
+    expect(collect($component->get('partyOptions'))->pluck('value'))->toContain('lead:' . $lead->id);
+
+    $component->set('selectedParty', 'lead:' . $lead->id)
+        ->assertSet('meeting.client_id', '')
+        ->assertSet('meeting.client_name', 'Prospect One')
+        ->assertSet('meeting.company_name', 'Prospect Labs')
+        ->assertSet('meeting.contact_number', '9988776655')
+        ->assertSet('meeting.contact_person', 'Prospect One');
+});
+
+it('shows leads and clients for super admin employees', function () {
+    Role::findOrCreate('Super Admin');
+
+    $superAdmin = User::factory()->create();
+    $superAdmin->assignRole('Super Admin');
+
+    $client = Client::create([
+        'client_name' => 'Admin Client',
+        'phone_number' => '9123456789',
+        'alternative_number' => null,
+        'email' => 'admin-client@example.com',
+        'state' => 'West Bengal',
+    ]);
+
+    $lead = Lead::create([
+        'name' => 'Admin Prospect',
+        'phone' => '9234567890',
+        'company' => 'Admin Labs',
+        'status' => 'Open',
+        'created_by' => $superAdmin->id,
+    ]);
+
+    $component = Livewire::actingAs($superAdmin)
+        ->test(MeetingSummaryManagement::class)
+        ->set('meeting.meeting_created_by', $superAdmin->id);
+
+    expect($component->get('showLeadOptions'))->toBeTrue();
+    expect(collect($component->get('partyOptions'))->pluck('value'))->toContain('client:' . $client->id);
+    expect(collect($component->get('partyOptions'))->pluck('value'))->toContain('lead:' . $lead->id);
+});
+
+it('shows only clients for non sales employees', function () {
+    $user = User::factory()->create();
+
+    $client = Client::create([
+        'client_name' => 'Client Only',
+        'phone_number' => '9000000000',
+        'alternative_number' => null,
+        'email' => 'client-only@example.com',
+        'state' => 'West Bengal',
+    ]);
+
+    $lead = Lead::create([
+        'name' => 'Lead Hidden',
+        'phone' => '9111111111',
+        'company' => 'Hidden Co',
+        'status' => 'Open',
+        'created_by' => $user->id,
+    ]);
+
+    $component = Livewire::actingAs($user)
+        ->test(MeetingSummaryManagement::class)
+        ->set('meeting.meeting_created_by', $user->id);
+
+    expect($component->get('showLeadOptions'))->toBeFalse();
+    expect(collect($component->get('partyOptions'))->pluck('value'))->toContain('client:' . $client->id);
+    expect(collect($component->get('partyOptions'))->pluck('value'))->not->toContain('lead:' . $lead->id);
 });
 
 it('updates an existing meeting summary and replaces attachment metadata', function () {
